@@ -44,12 +44,23 @@ public class HomeController {
 	private String tokenUrl = null;
 	private String exhangecode = null ;
 	private String payload = null ;
-	ClientRegistration cR;
+	ClientRegistration cR=null;
 	
 	String sessionStr="";
 
 	@RequestMapping(value = "/",  method = RequestMethod.GET)
 	public String home(Model model) {
+
+		if(cR!=null)
+		{
+			model.addAttribute("getAuthorizationTokenEndpoint", cR.getAuthorizationTokenEndpoint());
+			model.addAttribute("getTokenEndpoint", cR.getTokenEndpoint());
+			model.addAttribute("getTokenKeysEndpoint", cR.getTokenKeysEndpoint());
+			model.addAttribute("getClientId", cR.getClientId());
+			model.addAttribute("getClientSecret", cR.getClientSecret());
+			model.addAttribute("getScope", cR.getScope());
+			model.addAttribute("getAuthorizationCodeFlow", cR.getAuthorizationCodeFlow());
+		}
 		
 		return "Welcome";
 	}

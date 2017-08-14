@@ -45,38 +45,38 @@
 							Endpoint:</label>
 						<div class="col-sm-10">
 							<input type="text" class="form-control"
-								id="authorizationTokenEndpoint">
+								id="authorizationTokenEndpoint" value="${getAuthorizationTokenEndpoint}">
 						</div>
 					</div>
 					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Token Endpoint:</label>
 						<div class="col-sm-10">
-							<input type="text" class="form-control" id="tokenEndpoint">
+							<input type="text" class="form-control" id="tokenEndpoint" value="${getTokenEndpoint}">
 						</div>
 					</div>
 					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Token Keys Endpoint:</label>
 						<div class="col-sm-10">
-							<input type="text" class="form-control" id="tokenKeysEndpoint">
+							<input type="text" class="form-control" id="tokenKeysEndpoint" value="${getTokenKeysEndpoint}">
 						</div>
 					</div>
 					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Client ID:</label>
 						<div class="col-sm-10">
-							<input type=text class="form-control" id="clientId">
+							<input type=text class="form-control" id="clientId" value="${getClientId}">
 						</div>
 					</div>
 					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Client Secret:</label>
 						<div class="col-sm-10">
-							<input type=text class="form-control" id="clientSecret">
+							<input type=text class="form-control" id="clientSecret" value="${getClientSecret}">
 						</div>
 					</div>
 
 					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Scope:</label>
 						<div class="col-sm-10">
-							<input type="text" class="form-control" id="scope">
+							<input type="text" class="form-control" id="scope" value="${getScope}">
 						</div>
 					</div>
 					<div class="form-group form-group-md">
