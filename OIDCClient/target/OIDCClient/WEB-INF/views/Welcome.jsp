@@ -1,7 +1,7 @@
-<%@page	 session="false"%>
+<%@page session="false"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
-<%@ page isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page isELIgnored="false"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,16 +25,30 @@
 <body>
 	<div class="container" style="min-height: 500px">
 		<script>
-function redirect() {
-    window.location = '/OIDCClient/redirectUrl';
-}
-</script>
+			function fillInAttributes() {
+				alert('@Request.RequestContext.HttpContext.Session["clientId"]');
+				document.getElementById('authorizationTokenEndpoint').innerHTML=cR.getAttribute("authorizationTokenEndpoint");
+				
+				document.getElementById('tokenEndpoint').innerHTML=cR.getAttribute("tokenEndpoint");
+				document.getElementById('tokenKeysEndpoint').innerHTML=cR.getAttribute("tokenKeysEndpoint");
+				document.getElementById('clientId').innerHTML=cR.getAttribute("clientId");
+				document.getElementById('clientSecret').innerHTML=cR.getAttribute("clientSecret");
+				document.getElementById('scope').innerHTML=cR.getAttribute("scope");
+				document.getElementById('authorization_Code_Flow').innerHTML=cR.getAttribute("authorizationCodeFlow");
+				
+			}
+			function redirect() {
+				window.location = '/OIDCClient/redirectUrl';
+				alert("as");
+				fillInAttributes();
+			}
+		</script>
 		<button id="start" onclick='redirect();'>start</button>
 		<button id="config">config</button>
 		<div id="myModal" class="modal">
 			<div class="starter-template">
-				<br> <br> <br> <br> <br> <br>
-				<span class="close">&times;</span>
+				<br> <br> <br> <br> <br> <br> <span
+					class="close">&times;</span>
 				<form class="form-horizontal" id="submit-form" method="post">
 					<div class="form-group form-group-lg">
 						<label class="col-sm-2 control-label">Authorization Token
@@ -99,18 +113,19 @@ function redirect() {
 		</div>
 
 	</div>
-<div class="col-sm-10" >
-		<label class="col-sm-2 control-label">Exchange Token: </label> 
-		<input type="text" class="form-control" id="exchangeToken" value="" />
-	</div>	
-	<button type="submit" id="exchangeButton" class="btn btn-primary btn-md">Exchange</button>
-	<label class="col-sm-2 control-label" id ="sigveri"></label> 
 	<div class="col-sm-10">
-		<label class="col-sm-2 control-label">Payload: </label> 
+		<label class="col-sm-2 control-label">Exchange Token: </label> <input
+			type="text" class="form-control" id="exchangeToken" value="" />
+	</div>
+	<button type="submit" id="exchangeButton"
+		class="btn btn-primary btn-md">Exchange</button>
+	<label class="col-sm-2 control-label" id="sigveri"></label>
+	<div class="col-sm-10">
+		<label class="col-sm-2 control-label">Payload: </label>
 		<textarea class="form-control" rows="5" id="payload"></textarea>
 	</div>
 	<br>
-	
+
 	<script>
 		var modal = document.getElementById('myModal');
 
@@ -142,17 +157,16 @@ function redirect() {
 				submitViaAjax();
 			});
 		});
-		
-		$("#exchangeButton").click(function(){
-		    $.get("exchange", function(data, status){	
-		    	var json = (data).split("@");
-		    	document.getElementById("exchangeToken").value = json[0] ;
-				document.getElementById("payload").value = json[1] ;
-				document.getElementById("sigveri").innerHTML = json[2] ; 
-		    });
+
+		$("#exchangeButton").click(function() {
+			$.get("exchange", function(data, status) {
+				var json = (data).split("@");
+				document.getElementById("exchangeToken").value = json[0];
+				document.getElementById("payload").value = json[1];
+				document.getElementById("sigveri").innerHTML = json[2];
+			});
 		});
-		
-		
+
 		function submitViaAjax() {
 			var dataString = {}
 			dataString["authorizationTokenEndpoint"] = $(

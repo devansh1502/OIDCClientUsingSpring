@@ -1,7 +1,7 @@
-<%@page	 session="false"%>
+<%@page session="false"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
-<%@ page isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page isELIgnored="false"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,6 +10,8 @@
 <link href="resources/core/css/bootstrap.min.css" rel="stylesheet" />
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <%-- <spring:url value="/resources/core/js/jquery.1.10.2.min.js"
 	var="jqueryJs" />
 <script src="${jqueryJs}"></script> --%>
@@ -25,18 +27,20 @@
 <body>
 	<div class="container" style="min-height: 500px">
 		<script>
-function redirect() {
-    window.location = '/OIDCClient/redirectUrl';
-}
-</script>
+			function redirect() {
+				window.location = '/OIDCClient/redirectUrl';
+			}
+		</script>
 		<button id="start" onclick='redirect();'>start</button>
-		<button id="config">config</button>
+		<button id="config" class="pull-right">
+			Configuration<span class="glyphicon glyphicon-cog"></span>
+		</button>
 		<div id="myModal" class="modal">
 			<div class="starter-template">
-				<br> <br> <br> <br> <br> <br>
-				<span class="close">&times;</span>
+				<br> <br> <br> <br> <br> <br> <span
+					class="close">&times;</span>
 				<form class="form-horizontal" id="submit-form" method="post">
-					<div class="form-group form-group-lg">
+					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Authorization Token
 							Endpoint:</label>
 						<div class="col-sm-10">
@@ -44,38 +48,38 @@ function redirect() {
 								id="authorizationTokenEndpoint">
 						</div>
 					</div>
-					<div class="form-group form-group-lg">
+					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Token Endpoint:</label>
 						<div class="col-sm-10">
 							<input type="text" class="form-control" id="tokenEndpoint">
 						</div>
 					</div>
-					<div class="form-group form-group-lg">
+					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Token Keys Endpoint:</label>
 						<div class="col-sm-10">
 							<input type="text" class="form-control" id="tokenKeysEndpoint">
 						</div>
 					</div>
-					<div class="form-group form-group-lg">
+					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Client ID:</label>
 						<div class="col-sm-10">
 							<input type=text class="form-control" id="clientId">
 						</div>
 					</div>
-					<div class="form-group form-group-lg">
+					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Client Secret:</label>
 						<div class="col-sm-10">
 							<input type=text class="form-control" id="clientSecret">
 						</div>
 					</div>
 
-					<div class="form-group form-group-lg">
+					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Scope:</label>
 						<div class="col-sm-10">
 							<input type="text" class="form-control" id="scope">
 						</div>
 					</div>
-					<div class="form-group form-group-lg">
+					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Code Flow:</label>
 						<div class="col-sm-10">
 							<select id="authorization_Code_Flow">
@@ -87,7 +91,7 @@ function redirect() {
 					<div class="form-group">
 						<div class="col-sm-offset-2 col-sm-10">
 							<button type="submit" id="btn-submit"
-								class="btn btn-primary btn-lg">Submit</button>
+								class="btn btn-primary btn-md">Submit</button>
 						</div>
 					</div>
 				</form>
@@ -99,18 +103,19 @@ function redirect() {
 		</div>
 
 	</div>
-<div class="col-sm-10" >
-		<label class="col-sm-2 control-label">Exchange Token: </label> 
-		<input type="text" class="form-control" id="exchangeToken" value="" />
-	</div>	
-	<button type="submit" id="exchangeButton" class="btn btn-primary btn-md">Exchange</button>
-	<label class="col-sm-2 control-label" id ="sigveri"></label> 
 	<div class="col-sm-10">
-		<label class="col-sm-2 control-label">Payload: </label> 
+		<label class="col-sm-2 control-label">Exchange Token: </label> <input
+			type="text" class="form-control" id="exchangeToken" value="" />
+	</div>
+	<button type="submit" id="exchangeButton"
+		class="btn btn-info btn-md">Exchange</button>
+	<label class="col-sm-2 control-label" id="sigveri"></label>
+	<div class="col-sm-10">
+		<label class="col-sm-2 control-label">Payload: </label>
 		<textarea class="form-control" rows="5" id="payload"></textarea>
 	</div>
 	<br>
-	
+
 	<script>
 		var modal = document.getElementById('myModal');
 
@@ -135,24 +140,23 @@ function redirect() {
 		}
 		jQuery(document).ready(function($) {
 			$("#submit-form").submit(function(event) {
-				// Disble the search button
+				// Disble the submit button
 				enableSubmitButton(false);
 				// Prevent the form from submitting via the browser.
 				event.preventDefault();
 				submitViaAjax();
 			});
 		});
-		
-		$("#exchangeButton").click(function(){
-		    $.get("exchange", function(data, status){	
-		    	var json = (data).split("@");
-		    	document.getElementById("exchangeToken").value = json[0] ;
-				document.getElementById("payload").value = json[1] ;
-				document.getElementById("sigveri").innerHTML = json[2] ; 
-		    });
+
+		$("#exchangeButton").click(function() {
+			$.get("exchange", function(data, status) {
+				var json = (data).split("@");
+				document.getElementById("exchangeToken").value = json[0];
+				document.getElementById("payload").value = json[1];
+				document.getElementById("sigveri").innerHTML = json[2];
+			});
 		});
-		
-		
+
 		function submitViaAjax() {
 			var dataString = {}
 			dataString["authorizationTokenEndpoint"] = $(

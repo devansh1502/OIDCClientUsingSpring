@@ -82,6 +82,9 @@ public class HomeController {
 		System.out.println("Authorization_Code_Flow : " + clientRegistration.getAuthorizationCodeFlow());	
 		session.setAttribute(sessionStr, clientRegistration);
 		cR = (ClientRegistration) session.getAttribute(sessionStr);
+		System.out.println(cR.getAuthorizationTokenEndpoint());
+		System.out.println(cR.getTokenEndpoint());
+		System.out.println(cR.getTokenKeysEndpoint());
 		System.out.println(cR.getClientId());
 		System.out.println(cR.getClientSecret());
 		System.out.println(cR.getScope());

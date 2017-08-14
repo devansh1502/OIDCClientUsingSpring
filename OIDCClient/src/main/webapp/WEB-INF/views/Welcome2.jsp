@@ -22,11 +22,16 @@
 </nav>
 <body>
 	<div class="container" style="min-height: 500px">
-		<button id="start">Start</button>
+		<script>
+			function ridirect() {
+				window.location = '/OIDCClient/redirectUrl';
+			}
+		</script>
+		<button id="start" onclick='redirect();'>start</button>
 		<button id="config" data-toggle="modal" class="pull-right">
-			<!-- data-target="#configModal" -->
 			Configuration <span class="glyphicon glyphicon-cog"></span>
 		</button>
+		<!-- data-target="#configModal" -->
 
 
 		<div class="modal fade" id="configModal" role="dialog">
@@ -40,47 +45,47 @@
 					</div>
 					<div class="modal-body">
 						<form class="form-horizontal" id="submit-form" method="post">
-							<div class="form-group form-group-lg">
+							<div class="form-group form-group-md">
 								<label class="col-sm-2 control-label">Authorization
-									Endpoint:</label>
+									Token Endpoint:</label>
 								<div class="col-sm-10">
 									<input type="text" class="form-control"
-										id="authorizationEndpoint">
+										id="authorizationTokenEndpoint">
 								</div>
 							</div>
-							<div class="form-group form-group-lg">
+							<div class="form-group form-group-md">
 								<label class="col-sm-2 control-label">Token Endpoint:</label>
 								<div class="col-sm-10">
 									<input type="text" class="form-control" id="tokenEndpoint">
 								</div>
 							</div>
-							<div class="form-group form-group-lg">
+							<div class="form-group form-group-md">
 								<label class="col-sm-2 control-label">Token Keys
 									Endpoint:</label>
 								<div class="col-sm-10">
 									<input type="text" class="form-control" id="tokenKeysEndpoint">
 								</div>
 							</div>
-							<div class="form-group form-group-lg">
+							<div class="form-group form-group-md">
 								<label class="col-sm-2 control-label">Client ID:</label>
 								<div class="col-sm-10">
 									<input type=text class="form-control" id="clientId">
 								</div>
 							</div>
-							<div class="form-group form-group-lg">
+							<div class="form-group form-group-md">
 								<label class="col-sm-2 control-label">Client Secret:</label>
 								<div class="col-sm-10">
 									<input type=text class="form-control" id="clientSecret">
 								</div>
 							</div>
 
-							<div class="form-group form-group-lg">
+							<div class="form-group form-group-md">
 								<label class="col-sm-2 control-label">Scope:</label>
 								<div class="col-sm-10">
 									<input type=text class="form-control" id="scope">
 								</div>
 							</div>
-							<div class="form-group form-group-lg">
+							<div class="form-group form-group-md">
 								<label class="col-sm-2 control-label">OAuth Flow:</label>
 								<div class="col-sm-10">
 									<select id="authorization_Code_Flow">
@@ -108,7 +113,18 @@
 		</div>
 
 	</div>
-
+	<div class="col-sm-10">
+		<label class="col-sm-2 control-label">Exchange Token: </label> <input
+			type="text" class="form-control" id="exchangeToken" value="" />
+	</div>
+	<button type="submit" id="exchangeButton"
+		class="btn btn-info btn-md">Exchange</button>
+	<label class="col-sm-2 control-label" id="sigveri"></label>
+	<div class="col-sm-10">
+		<label class="col-sm-2 control-label">Payload: </label>
+		<textarea class="form-control" rows="5" id="payload"></textarea>
+	</div>
+	<br>
 	<script>
 		var modal = document.getElementById('configModal');
 
@@ -144,7 +160,7 @@
 
 			$("#submit-form").submit(function(event) {
 
-				// Disble the search button
+				// Disble the submit button
 				enableSubmitButton(false);
 
 				// Prevent the form from submitting via the browser.
@@ -155,60 +171,67 @@
 			});
 
 		});
-
-		 $("#btn-submit").click(function() {
-
-			 var dataString = {}
-				dataString["authorizationTokenEndpoint"] = $(
-						"#authorizationTokenEndpoint").val();
-				dataString["tokenEndpoint"] = $("#tokenEndpoint").val();
-				dataString["tokenKeysEndpoint"] = $("#tokenKeysEndpoint").val();
-				dataString["clientId"] = $("#clientId").val();
-				dataString["clientSecret"] = $("#clientsecret").val();
-				dataString["scope"] = $("#scope").val();
-				dataString["authorizationCodeFlow"] = $("#authorization_Code_Flow")
-						.val();
-				console.log(JSON.stringify(dataString));
-				$.ajax({
-					type : "POST",
-				/* 	headers : {
-						'Accept' : 'application/json',
-						'Content-Type' : 'application/json'
-					}, */
-					contentType : "application/json",
-					url : "${home}startOAuth",
-					data : JSON.stringify(dataString),
-					dataType : 'json',
-					timeout : 100000,
-					success : function(data) {
-						console.log("SUCCESS: ", data);
-						//display(data);
-					},
-					error : function(xhr,status,error) {
-						console.log("ERROR:");
-						console.log(xhr);
-						console.log(status);
-						console.log(error);
-						//display(e);
-					},
-					done : function(e) {
-						console.log("DONE");
-						//enableSearchButton(true);
-					}
-				})/* .done(function() {
-				    alert( "success" )) */; 
-
+		$("#exchangeButton").click(function() {
+			$.get("exchange", function(data, status) {
+				var json = (data).split("@");
+				document.getElementById("exchangeToken").value = json[0];
+				document.getElementById("payload").value = json[1];
+				document.getElementById("sigveri").innerHTML = json[2];
+			});
 		});
+		$("#btn-submit").click(
+				function() {
 
-/* 		function enableSubmitButton(flag) {
+					var dataString = {}
+					dataString["authorizationTokenEndpoint"] = $(
+							"#authorizationTokenEndpoint").val();
+					dataString["tokenEndpoint"] = $("#tokenEndpoint").val();
+					dataString["tokenKeysEndpoint"] = $("#tokenKeysEndpoint")
+							.val();
+					dataString["clientId"] = $("#clientId").val();
+					dataString["clientSecret"] = $("#clientsecret").val();
+					dataString["scope"] = $("#scope").val();
+					dataString["authorizationCodeFlow"] = $(
+							"#authorization_Code_Flow").val();
+					console.log(JSON.stringify(dataString));
+					$.ajax({
+						type : "POST",
+						headers : {
+							'Accept' : 'application/json',
+							'Content-Type' : 'application/json'
+						},
+						contentType : "application/json",
+						url : "${home}startOAuth",
+						data : JSON.stringify(dataString),
+						dataType : 'json',
+						timeout : 100000,
+						success : function(data) {
+							console.log("SUCCESS: ", data);
+							//display(data);
+						},
+						error : function(xhr, status, error) {
+							console.log("ERROR:");
+							console.log(xhr);
+							console.log(status);
+							console.log(error);
+							//display(e);
+						},
+						done : function(e) {
+							console.log("DONE");
+							//enableSearchButton(true);
+						}
+					})/* .done(function() {
+																													    alert( "success" )) */;
+
+				});
+		function enableSubmitButton(flag) {
 			$("#btn-submit").prop("disabled", flag);
-		} */
-
-	/* 	function display(data) {
+		}
+		function display(data) {
 			var json = "<h4>Ajax Response</h4><pre>"
 					+ JSON.stringify(data, null, 4) + "</pre>";
 			$('#feedback').html(json);
-		} */
+		}
 	</script>
 
 </body>
