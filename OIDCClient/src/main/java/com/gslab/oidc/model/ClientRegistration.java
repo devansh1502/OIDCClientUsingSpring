@@ -50,4 +50,5 @@ public class ClientRegistration {
 	public void setAuthorizationCodeFlow(String authorizationCodeFlow) {
 		this.authorizationCodeFlow = authorizationCodeFlow;
 	}
+	
 }

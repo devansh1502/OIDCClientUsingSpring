@@ -8,13 +8,23 @@
 	<name>OIDCClient Maven Webapp</name>
 	<properties>
 		<springframework.version>4.0.6.RELEASE</springframework.version>
+		<nimbusjosejwt.version>4.23</nimbusjosejwt.version>
+		<jacksondatabind.version>2.9.0</jacksondatabind.version>
+		<jacksoncore.version>2.9.0</jacksoncore.version>
+		<jacksonannotations.version>2.9.0</jacksonannotations.version>
+		<javaservletapi.version>3.1.0</javaservletapi.version>
+		<jstl.version>1.2</jstl.version>
+		<commonshttpclient.version>3.1</commonshttpclient.version>
+		<json.version>20090211</json.version>
+		<junit.version>3.8.1</junit.version>
+		<springsecurity.version>4.2.3.RELEASE</springsecurity.version>
 	</properties>
 	<url>http://maven.apache.org</url>
 	<dependencies>
 		<dependency>
 			<groupId>com.nimbusds</groupId>
 			<artifactId>nimbus-jose-jwt</artifactId>
-			<version>4.23</version>
+			<version>${nimbusjosejwt.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -24,49 +34,49 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.9.0</version>
+			<version>${jacksondatabind.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.9.0</version>
+			<version>${jacksoncore.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
-			<version>2.9.0</version>
+			<version>${jacksonannotations.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
+			<version>${javaservletapi.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
-			<version>1.2</version>
+			<version>${jstl.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
-			<version>3.1</version>
+			<version>${commonshttpclient.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20090211</version>
+			<version>${json.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>4.2.3.RELEASE</version>
+			<version>${springsecurity.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

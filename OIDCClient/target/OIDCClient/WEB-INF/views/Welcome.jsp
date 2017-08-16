@@ -10,6 +10,8 @@
 <link href="resources/core/css/bootstrap.min.css" rel="stylesheet" />
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <%-- <spring:url value="/resources/core/js/jquery.1.10.2.min.js"
 	var="jqueryJs" />
 <script src="${jqueryJs}"></script> --%>
@@ -23,88 +25,84 @@
 	</div>
 </nav>
 <body>
-	<div class="container" style="min-height: 500px">
+	<div class="container" style="min-height: 450px">
 		<script>
-			function fillInAttributes() {
-				alert('@Request.RequestContext.HttpContext.Session["clientId"]');
-				document.getElementById('authorizationTokenEndpoint').innerHTML=cR.getAttribute("authorizationTokenEndpoint");
-				
-				document.getElementById('tokenEndpoint').innerHTML=cR.getAttribute("tokenEndpoint");
-				document.getElementById('tokenKeysEndpoint').innerHTML=cR.getAttribute("tokenKeysEndpoint");
-				document.getElementById('clientId').innerHTML=cR.getAttribute("clientId");
-				document.getElementById('clientSecret').innerHTML=cR.getAttribute("clientSecret");
-				document.getElementById('scope').innerHTML=cR.getAttribute("scope");
-				document.getElementById('authorization_Code_Flow').innerHTML=cR.getAttribute("authorizationCodeFlow");
-				
-			}
 			function redirect() {
 				window.location = '/OIDCClient/redirectUrl';
-				alert("as");
-				fillInAttributes();
 			}
 		</script>
-		<button id="start" onclick='redirect();'>start</button>
-		<button id="config">config</button>
+		<button id="start" onclick='redirect();'>Start <span class="glyphicon glyphicon-hand-right"></span></button>
+		<button id="config" class="pull-right">
+			Configuration<span class="glyphicon glyphicon-cog"></span>
+		</button>
 		<div id="myModal" class="modal">
 			<div class="starter-template">
 				<br> <br> <br> <br> <br> <br> <span
 					class="close">&times;</span>
 				<form class="form-horizontal" id="submit-form" method="post">
-					<div class="form-group form-group-lg">
+					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Authorization Token
 							Endpoint:</label>
 						<div class="col-sm-10">
 							<input type="text" class="form-control"
-								id="authorizationTokenEndpoint">
+								id="authorizationTokenEndpoint"
+								value="${getAuthorizationTokenEndpoint}">
 						</div>
 					</div>
-					<div class="form-group form-group-lg">
+					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Token Endpoint:</label>
 						<div class="col-sm-10">
-							<input type="text" class="form-control" id="tokenEndpoint">
+							<input type="text" class="form-control" id="tokenEndpoint"
+								value="${getTokenEndpoint}">
 						</div>
 					</div>
-					<div class="form-group form-group-lg">
+					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Token Keys Endpoint:</label>
 						<div class="col-sm-10">
-							<input type="text" class="form-control" id="tokenKeysEndpoint">
+							<input type="text" class="form-control" id="tokenKeysEndpoint"
+								value="${getTokenKeysEndpoint}">
 						</div>
 					</div>
-					<div class="form-group form-group-lg">
+					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Client ID:</label>
 						<div class="col-sm-10">
-							<input type=text class="form-control" id="clientId">
+							<input type=text class="form-control" id="clientId"
+								value="${getClientId}">
 						</div>
 					</div>
-					<div class="form-group form-group-lg">
+					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Client Secret:</label>
 						<div class="col-sm-10">
-							<input type=text class="form-control" id="clientSecret">
+							<input type=text class="form-control" id="clientSecret"
+								value="${getClientSecret}">
 						</div>
 					</div>
 
-					<div class="form-group form-group-lg">
+					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Scope:</label>
 						<div class="col-sm-10">
-							<input type="text" class="form-control" id="scope">
+							<input type="text" class="form-control" id="scope"
+								value="${getScope}">
 						</div>
 					</div>
-					<div class="form-group form-group-lg">
+					<div class="form-group form-group-md">
 						<label class="col-sm-2 control-label">Code Flow:</label>
 						<div class="col-sm-10">
 							<select id="authorization_Code_Flow">
-								<option value="Authorization_Code_Flow">Authorization
+								<option value="authorizationCodeFlow">Authorization
 									Code Flow</option>
+								<option value="Implicit_Code_Flow">Implicit Code Flow</option>
 							</select>
 						</div>
 					</div>
 					<div class="form-group">
 						<div class="col-sm-offset-2 col-sm-10">
 							<button type="submit" id="btn-submit"
-								class="btn btn-primary btn-lg">Submit</button>
+								class="btn btn-primary btn-md">Submit</button>
 						</div>
 					</div>
 				</form>
+				
 				<!-- <form action ="/startOAuth" method="post">
 			<input id="submit" type="submit" value="Submit">
 			</form>
@@ -117,8 +115,7 @@
 		<label class="col-sm-2 control-label">Exchange Token: </label> <input
 			type="text" class="form-control" id="exchangeToken" value="" />
 	</div>
-	<button type="submit" id="exchangeButton"
-		class="btn btn-primary btn-md">Exchange</button>
+	<button type="submit" id="exchangeButton" class="btn btn-info btn-md" >Exchange</button>
 	<label class="col-sm-2 control-label" id="sigveri"></label>
 	<div class="col-sm-10">
 		<label class="col-sm-2 control-label">Payload: </label>
@@ -148,9 +145,40 @@
 				modal.style.display = "none";
 			}
 		}
+		</script>
+		<script>
+		if (window.location.hash != "") {
+
+			var string = window.location.hash.substr(1);
+			var query = string.split('&');
+			var param;
+			var idurl, access_token;
+			// Parse the URI hash to fetch the access token
+			for (var i = 0; i < query.length; i++) {
+				param = query[i].split('=');
+				if (param[0] == 'access_token') {
+					access_token = param[1];
+				}
+				if (param[0] == 'id') {
+					idurl = param[1];
+				}
+
+			}
+			var urlsend = decodeURIComponent(idurl) + '?access_token='
+					+ access_token;
+
+			$.post("/OIDCClient/expayload", {
+				payload : urlsend
+			}, function(data, status) {
+				document.getElementById("payload").value = data;
+			});
+
+		}
+</script>
+<script>
 		jQuery(document).ready(function($) {
 			$("#submit-form").submit(function(event) {
-				// Disble the search button
+				// Disble the submit button
 				enableSubmitButton(false);
 				// Prevent the form from submitting via the browser.
 				event.preventDefault();

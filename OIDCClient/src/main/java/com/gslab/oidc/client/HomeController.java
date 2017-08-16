@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 //import java.util.Enumeration;
 import java.text.ParseException;
@@ -14,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +31,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.gslab.oidc.jsonViews.Views;
 import com.gslab.oidc.model.ClientRegistration;
-
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
@@ -37,33 +39,67 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.SignedJWT;
 @Controller
 public class HomeController {
-
+	
 	private String redirectUri = "https://localhost:8443/OIDCClient/startOAuth/_callback";
 	
 	private String authUrl = null;
 	private String tokenUrl = null;
 	private String exhangecode = null ;
 	private String payload = null ;
-	ClientRegistration cR=null;
+	private String payloadIm = null;
+	ClientRegistration cR = null ;
 	
 	String sessionStr="";
 
 	@RequestMapping(value = "/",  method = RequestMethod.GET)
 	public String home(Model model) {
-
+		
+		
 		if(cR!=null)
 		{
-			model.addAttribute("getAuthorizationTokenEndpoint", cR.getAuthorizationTokenEndpoint());
+			model.addAttribute("getAuthorizationCodeFlow", cR.getAuthorizationTokenEndpoint());
 			model.addAttribute("getTokenEndpoint", cR.getTokenEndpoint());
 			model.addAttribute("getTokenKeysEndpoint", cR.getTokenKeysEndpoint());
 			model.addAttribute("getClientId", cR.getClientId());
 			model.addAttribute("getClientSecret", cR.getClientSecret());
 			model.addAttribute("getScope", cR.getScope());
-			model.addAttribute("getAuthorizationCodeFlow", cR.getAuthorizationCodeFlow());
+			//model.addAttribute("getAuthorizationCodeFlow", cR.getAuthorizationCodeFlow());
 		}
 		
+		if(payloadIm!=null)
+		{
+			model.addAttribute("payloadIm", payloadIm);
+		}
 		return "Welcome";
 	}
+	
+	@RequestMapping(value = "/expayload", method = RequestMethod.POST)
+	@ResponseBody
+	public String payloadextract(@RequestBody String payload, HttpSession session) {
+		
+		try {
+			String payloadurl = URLDecoder.decode(payload.substring(8,payload.length()), "UTF-8");
+			System.out.println(payloadurl);
+			HttpClient httpclient = new HttpClient();
+			GetMethod get = new GetMethod(payloadurl);
+			try {
+				httpclient.executeMethod(get);
+				return (get.getResponseBodyAsString()).toString();
+			} catch (HttpException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	    return "NULL";
+	}
+	
+	
 	
 	@RequestMapping(value = "/exchange",  method = RequestMethod.GET)
 	@ResponseBody
@@ -83,7 +119,8 @@ public class HomeController {
 	@RequestMapping(value = "/startOAuth", method=RequestMethod.POST , consumes={"application/json"})
 	@ResponseBody
 	public String authenticate(@RequestBody ClientRegistration clientRegistration, HttpSession session) throws ServletException, IOException {
-		
+		String responsetype = "code";
+		String authtype ;
 		System.out.println("Authorization Token Endpoint :" + clientRegistration.getAuthorizationTokenEndpoint());
 		System.out.println("Token Endpoint :" + clientRegistration.getTokenEndpoint());
 		System.out.println("Token Keys Endpoint :" + clientRegistration.getTokenKeysEndpoint());
@@ -93,17 +130,26 @@ public class HomeController {
 		System.out.println("Authorization_Code_Flow : " + clientRegistration.getAuthorizationCodeFlow());	
 		session.setAttribute(sessionStr, clientRegistration);
 		cR = (ClientRegistration) session.getAttribute(sessionStr);
-		System.out.println(cR.getAuthorizationTokenEndpoint());
-		System.out.println(cR.getTokenEndpoint());
-		System.out.println(cR.getTokenKeysEndpoint());
 		System.out.println(cR.getClientId());
 		System.out.println(cR.getClientSecret());
 		System.out.println(cR.getScope());
 		System.out.println(cR.getAuthorizationCodeFlow());
+		authtype = cR.getAuthorizationCodeFlow();
+		
+		if(authtype.equals("Implicit_Code_Flow")){
+			responsetype = "token";
+			redirectUri = "http://localhost:8080/OIDCClient/";
+		}else{
+			responsetype = "code";
+			redirectUri = "https://localhost:8443/OIDCClient/startOAuth/_callback";
+		}
+		
+		System.out.println(responsetype);
 			try {
-				authUrl = clientRegistration.getAuthorizationTokenEndpoint() + "?response_type=code"
+				authUrl = clientRegistration.getAuthorizationTokenEndpoint() + "?response_type="+ responsetype
 						+ "&scope="+ clientRegistration.getScope() + "&client_id=" + cR.getClientId()
 						+ "&redirect_uri=" + URLEncoder.encode(redirectUri, "UTF-8");
+		
 			} catch (UnsupportedEncodingException e) {
 				throw new ServletException(e);
 			}
@@ -116,11 +162,15 @@ public class HomeController {
 		
 		String accessToken = null ;
 		String userIdToken; 
+		String authtype ;
+		HttpClient httpclient = new HttpClient();
+		GetMethod get;
 		
 		if (accessToken == null) {
-			tokenUrl = cR.getTokenEndpoint();
+			//Auth method
+		    tokenUrl = cR.getTokenEndpoint();
 			String code = request.getParameter("code");
-			HttpClient httpclient = new HttpClient();
+			
 			PostMethod post = new PostMethod(tokenUrl);
 			post.addParameter("code", code);
 			post.addParameter("grant_type", "authorization_code");
@@ -130,7 +180,7 @@ public class HomeController {
 
 			try {
 				httpclient.executeMethod(post);
-				
+				payloadIm = null;
 				try {
 					JSONObject authResponse = new JSONObject(
 							new JSONTokener(new InputStreamReader(post.getResponseBodyAsStream())));
@@ -150,7 +200,7 @@ public class HomeController {
 						e1.printStackTrace();
 					}
 					String kid = idToken.getHeader().getKeyID();
-
+								
 					JWKSet jwks = null;
 					try {
 						jwks = JWKSet.load(new URL(cR.getTokenKeysEndpoint()));
@@ -175,7 +225,8 @@ public class HomeController {
 						  System.out.println("valid signature");
 						  
 						  exhangecode = code;
-						  payload = idToken.getPayload().toString() ;
+						  
+						  payload = idToken.getPayload().toString();
 						  return "redirect:/";
 						} else {
 						  System.out.println("invalid signature");
@@ -194,7 +245,7 @@ public class HomeController {
 			}
 			
 		}
-        
 		return "FAILURE";
-	}
+}
+	
 }
