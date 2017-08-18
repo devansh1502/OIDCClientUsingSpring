@@ -1,6 +1,7 @@
 <%@page session="false"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page isELIgnored="false"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,7 +28,7 @@
 				window.location = '/OIDCClient/redirectUrl';
 			}
 		</script>
-		<button id="start" onclick='redirect();'>start</button>
+		<button id="start" onclick='redirect();'>Start</button>
 		<button id="config" data-toggle="modal" class="pull-right">
 			Configuration <span class="glyphicon glyphicon-cog"></span>
 		</button>
@@ -51,7 +52,7 @@
 								<div class="col-sm-10">
 									<input type="text" class="form-control"
 										id="authorizationTokenEndpoint"
-										value="${getAuthorizationTokenEndpoint}">
+										value="${getAuthorizationCodeFlow}">
 								</div>
 							</div>
 							<div class="form-group form-group-md">
@@ -98,7 +99,8 @@
 										<option value="Authorization_Code_Flow">Authorization
 											Code Flow</option>
 										<option value="Implicit_Code_flow">Implicit Code Flow</option>
-									</select>
+									</select> <span class="glyphicon glyphicon-warning-sign">Open In
+										Private Window For Implicit Flow.</span>
 								</div>
 							</div>
 						</form>
@@ -121,14 +123,26 @@
 
 	</div>
 	<div class="col-sm-10">
-		<label class="col-sm-2 control-label">Exchange Token: </label> <input
-			type="text" class="form-control" id="exchangeToken" value="" />
+		<label class="col-sm-2 control-label">Exchange Code:</label> <input
+			type="text" class="form-control" id="exchangeToken" value="${code}" />
 	</div>
-	<button type="submit" id="exchangeButton" class="btn btn-info btn-md">Exchange</button>
+	<button type="submit" id="exchangeButton"
+		class="btn btn-primary btn-md">Exchange</button>
 	<label class="col-sm-2 control-label" id="sigveri"></label>
+
 	<div class="col-sm-10">
-		<label class="col-sm-2 control-label">Payload: </label>
-		<textarea class="form-control" rows="5" id="payload"></textarea>
+		<label class="col-sm-2 control-label">Request Access:</label>
+		<textarea class="form-control" rows="5" id="requestURL"></textarea>
+	</div>
+
+	<div class="col-sm-10">
+		<label class="col-sm-2 control-label">Id Token:</label>
+		<textarea class="form-control" rows="5" id="id_token"></textarea>
+	</div>
+	<button type="submit" id="verifyButton" class="btn btn-primary btn-md">Verify</button>
+	<div class="col-sm-10">
+		<label class="col-sm-2 control-label">Payload:</label>
+		<textarea class="form-control" rows="5" id="payload">${payloadIm}</textarea>
 	</div>
 	<br>
 	<script>
@@ -157,6 +171,35 @@
 			}
 		} */
 
+		if (window.location.hash != "") {
+
+			var string = window.location.hash.substr(1);
+			var query = string.split('&');
+			var param;
+			var idurl, access_token;
+			// Parse the URI hash to fetch the access token
+			for (var i = 0; i < query.length; i++) {
+				param = query[i].split('=');
+				if (param[0] == 'access_token') {
+					access_token = param[1];
+				}
+				if (param[0] == 'id') {
+					idurl = param[1];
+				}
+			}
+
+			var urlsend = decodeURIComponent(idurl) + '?access_token='
+					+ access_token;
+
+			$.post("/OIDCClient/expayload", {
+				payload : urlsend
+			}, function(data, status) {
+				var str = JSON.parse(data);
+				document.getElementById("payload").value = JSON.stringify(str,
+						undefined, 4);
+			});
+
+		}
 		$(function() {
 			//console.log("ready");
 			$('#config').click(function() {
@@ -185,6 +228,24 @@
 				document.getElementById("sigveri").innerHTML = json[2];
 			});
 		});
+
+		$("#verifyButton")
+				.click(
+						function() {
+							$
+									.get(
+											"verify",
+											function(data, status) {
+												var str = JSON.parse(data);
+												document
+														.getElementById("payload").value = JSON
+														.stringify(str,
+																undefined, 4);
+												document
+														.getElementById("sigveri").value = "Signature Verified";
+											});
+						});
+
 		$("#btn-submit").click(
 				function() {
 
@@ -195,7 +256,7 @@
 					dataString["tokenKeysEndpoint"] = $("#tokenKeysEndpoint")
 							.val();
 					dataString["clientId"] = $("#clientId").val();
-					dataString["clientSecret"] = $("#clientsecret").val();
+					dataString["clientSecret"] = $("#clientSecret").val();
 					dataString["scope"] = $("#scope").val();
 					dataString["authorizationCodeFlow"] = $(
 							"#authorization_Code_Flow").val();
@@ -213,6 +274,7 @@
 						timeout : 100000,
 						success : function(data) {
 							console.log("SUCCESS: ", data);
+							$('#configModal').modal('toggle');
 							//display(data);
 						},
 						error : function(xhr, status, error) {
@@ -220,6 +282,7 @@
 							console.log(xhr);
 							console.log(status);
 							console.log(error);
+							$('#configModal').modal('toggle');
 							//display(e);
 						},
 						done : function(e) {
@@ -227,7 +290,7 @@
 							//enableSearchButton(true);
 						}
 					})/* .done(function() {
-										alert( "success" )) */;
+																														alert( "success" )) */;
 
 				});
 		function enableSubmitButton(flag) {

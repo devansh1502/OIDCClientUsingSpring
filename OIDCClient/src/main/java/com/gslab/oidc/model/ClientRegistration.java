@@ -8,6 +8,8 @@ public class ClientRegistration {
 	private String clientSecret;
 	private String scope;
 	private String authorizationCodeFlow;
+	
+	private String payload;
 	public String getAuthorizationTokenEndpoint() {
 		return authorizationTokenEndpoint;
 	}
@@ -50,5 +52,11 @@ public class ClientRegistration {
 	public void setAuthorizationCodeFlow(String authorizationCodeFlow) {
 		this.authorizationCodeFlow = authorizationCodeFlow;
 	}
-	
+	public String getPayload() {
+		return payload;
+	}
+	public void setPayload(String payload) {
+		this.payload = payload;
+	}
+		
 }
