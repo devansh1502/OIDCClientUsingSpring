@@ -34,8 +34,7 @@
 		</button>
 		<!-- data-target="#configModal" -->
 
-
-		<div class="modal fade" id="configModal" role="dialog">
+		<div class="modal fade" id="myModal" role="dialog">
 			<div class="modal-dialog">
 
 				<!-- Modal content-->
@@ -48,11 +47,11 @@
 						<form class="form-horizontal" id="submit-form" method="post">
 							<div class="form-group form-group-md">
 								<label class="col-sm-2 control-label">Authorization
-									Token Endpoint:</label>
+									 Endpoint:</label>
 								<div class="col-sm-10">
 									<input type="text" class="form-control"
 										id="authorizationTokenEndpoint"
-										value="${getAuthorizationCodeFlow}">
+										value="${getAuthorizationTokenEndpoint}">
 								</div>
 							</div>
 							<div class="form-group form-group-md">
@@ -84,7 +83,6 @@
 										value="${getClientSecret}">
 								</div>
 							</div>
-
 							<div class="form-group form-group-md">
 								<label class="col-sm-2 control-label">Scope:</label>
 								<div class="col-sm-10">
@@ -99,7 +97,7 @@
 										<option value="Authorization_Code_Flow">Authorization
 											Code Flow</option>
 										<option value="Implicit_Code_flow">Implicit Code Flow</option>
-									</select> <span class="glyphicon glyphicon-warning-sign">Open In
+									</select> <span class="alert alert-warning glyphicon glyphicon-warning-sign">Open In
 										Private Window For Implicit Flow.</span>
 								</div>
 							</div>
@@ -122,8 +120,8 @@
 		</div>
 
 	</div>
-	<div class="col-sm-10">
-		<label class="col-sm-2 control-label">Exchange Code:</label> <input
+		<div class="col-sm-10">
+		<label class="col-sm-2 control-label">Auth Code:</label> <input
 			type="text" class="form-control" id="exchangeToken" value="${code}" />
 	</div>
 	<button type="submit" id="exchangeButton"
@@ -131,22 +129,21 @@
 	<label class="col-sm-2 control-label" id="sigveri"></label>
 
 	<div class="col-sm-10">
-		<label class="col-sm-2 control-label">Request Access:</label>
+		<label class="col-sm-2 control-label">Auth Response:</label>
 		<textarea class="form-control" rows="5" id="requestURL"></textarea>
 	</div>
 
 	<div class="col-sm-10">
 		<label class="col-sm-2 control-label">Id Token:</label>
-		<textarea class="form-control" rows="5" id="id_token"></textarea>
+		<textarea class="form-control" rows="5" id="id_token">${idToken}</textarea>
 	</div>
 	<button type="submit" id="verifyButton" class="btn btn-primary btn-md">Verify</button>
 	<div class="col-sm-10">
 		<label class="col-sm-2 control-label">Payload:</label>
 		<textarea class="form-control" rows="5" id="payload">${payloadIm}</textarea>
 	</div>
-	<br>
-	<script>
-		var modal = document.getElementById('configModal');
+	<br>	<script>
+		var modal = document.getElementById('myModal');
 
 		// Get the button that opens the modal
 		var btn = document.getElementById("config");
@@ -174,32 +171,43 @@
 		if (window.location.hash != "") {
 
 			var string = window.location.hash.substr(1);
+			$("#requestURL").val(string);
 			var query = string.split('&');
+			console.log(string);
 			var param;
-			var idurl, access_token;
+			var idTokenVal, access_token;
 			// Parse the URI hash to fetch the access token
 			for (var i = 0; i < query.length; i++) {
 				param = query[i].split('=');
-				if (param[0] == 'access_token') {
-					access_token = param[1];
-				}
-				if (param[0] == 'id') {
-					idurl = param[1];
+				/* 	if (param[0] == 'access_token') {
+						access_token = param[1];
+					} */
+				if (param[0] == 'id_token') {
+					console.log(param[0]);
+					idTokenVal = param[1];
+					console.log(param[1]);
+					break;
 				}
 			}
+			$("#id_token").val(idTokenVal);
+			$.post('setIdToken', {
+				"idTokenResp" : idTokenVal
+			}).done(function(data, status) {
+				console.log("response = " + data);
+			});
 
-			var urlsend = decodeURIComponent(idurl) + '?access_token='
-					+ access_token;
+			/* var urlsend = decodeURIComponent(idurl) + '?access_token=' + access_token;
+			console.log("hello"); */
 
-			$.post("/OIDCClient/expayload", {
+			/* $.post("/OIDCClient/expayload", {
 				payload : urlsend
 			}, function(data, status) {
 				var str = JSON.parse(data);
-				document.getElementById("payload").value = JSON.stringify(str,
-						undefined, 4);
+				document.getElementById("payload").value = JSON.stringify(str,undefined,4);
 			});
-
+			 */
 		}
+
 		$(function() {
 			//console.log("ready");
 			$('#config').click(function() {
@@ -209,7 +217,7 @@
 
 			$("#submit-form").submit(function(event) {
 
-				// Disble the submit button
+				// Disable the submit button
 				enableSubmitButton(false);
 
 				// Prevent the form from submitting via the browser.
@@ -220,31 +228,34 @@
 			});
 
 		});
-		$("#exchangeButton").click(function() {
-			$.get("exchange", function(data, status) {
-				var json = (data).split("@");
-				document.getElementById("exchangeToken").value = json[0];
-				document.getElementById("payload").value = json[1];
-				document.getElementById("sigveri").innerHTML = json[2];
-			});
-		});
+		$("#exchangeButton")
+		.click(
+				function() {
+					$.get("exchange", function(data, status) {
+
+					}).done(function(data, status) {
+										var str = JSON.parse(data);
+										document.getElementById("requestURL").value = JSON.stringify(str,undefined, 4);
+										document.getElementById("id_token").value = str["id_token"];
+									});
+				});
 
 		$("#verifyButton")
-				.click(
-						function() {
-							$
-									.get(
-											"verify",
-											function(data, status) {
-												var str = JSON.parse(data);
-												document
-														.getElementById("payload").value = JSON
-														.stringify(str,
-																undefined, 4);
-												document
-														.getElementById("sigveri").value = "Signature Verified";
-											});
-						});
+		.click(
+				function() {
+					$
+							.get(
+									"verify",
+									function(data, status) {
+										var str = JSON.parse(data);
+										document
+												.getElementById("payload").value = JSON
+												.stringify(str,
+														undefined, 4);
+										document
+												.getElementById("sigveri").value = "Signature Verified";
+									});
+				});
 
 		$("#btn-submit").click(
 				function() {
@@ -268,7 +279,7 @@
 							'Content-Type' : 'application/json'
 						},
 						contentType : "application/json",
-						url : "${home}startOAuth",
+						url : "startOAuth",
 						data : JSON.stringify(dataString),
 						dataType : 'json',
 						timeout : 100000,
@@ -287,11 +298,9 @@
 						},
 						done : function(e) {
 							console.log("DONE");
-							//enableSearchButton(true);
+							//enableSubmitButton(true);
 						}
-					})/* .done(function() {
-																														alert( "success" )) */;
-
+					})
 				});
 		function enableSubmitButton(flag) {
 			$("#btn-submit").prop("disabled", flag);

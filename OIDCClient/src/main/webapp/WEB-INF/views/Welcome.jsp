@@ -5,12 +5,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style type="text/css">
+body {
+	background: black !important;
+}
+/* Adding !important forces the browser to overwrite the default style applied by Bootstrap */
+</style>
+<style>
+/* The Modal (background) */
+.modal {
+	display: none; /* Hidden by default */
+	position: fixed; /* Stay in place */
+	z-index: 1; /* Sit on top */
+	padding-top: 100px; /* Location of the box */
+	left: 0;
+	top: 0;
+	width: 100%; /* Full width */
+	height: 100%; /* Full height */
+	overflow: auto; /* Enable scroll if needed */
+	background-color: rgb(0, 0, 0); /* Fallback color */
+	background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+	position: relative;
+	background-color: #fefefe;
+	margin: auto;
+	padding: 0;
+	border: 1px solid #888;
+	width: 80%;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0
+		rgba(0, 0, 0, 0.19);
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 0.4s;
+	animation-name: animatetop;
+	animation-duration: 0.4s
+}
+
+/* Add Animation */
+@
+-webkit-keyframes animatetop {
+	from {top: -300px;
+	opacity: 0
+}
+
+to {
+	top: 0;
+	opacity: 1
+}
+
+}
+@
+keyframes animatetop {
+	from {top: -300px;
+	opacity: 0
+}
+
+to {
+	top: 0;
+	opacity: 1
+}
+
+}
+
+/* The Close Button */
+.close {
+	color: white;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.close:hover, .close:focus {
+	color: #000;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.modal-header {
+	padding: 2px 16px;
+	background-color: #5cb85c;
+	color: white;
+}
+
+.modal-body {
+	padding: 2px 16px;
+}
+
+.modal-footer {
+	padding: 2px 16px;
+	background-color: #5cb85c;
+	color: white;
+}
+</style>
 <spring:url value="/resources/core/css/bootstrap.min.css"
 	var="bootstrapCss" />
+
 <link href="${bootstrapCss}" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script
-	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
+	
+</script>
 
 </head>
 <nav class="navbar navbar-inverse">
@@ -21,7 +118,7 @@
 	</div>
 </nav>
 <body>
-	<div class="container" style="min-height: 500px">
+	<div class="container" style="min-height: 50px">
 		<script>
 			function redirect() {
 				window.location = '/OIDCClient/redirectUrl';
@@ -33,108 +130,149 @@
 		<button id="config" class="pull-right">
 			Configuration <span class="glyphicon glyphicon-cog"></span>
 		</button>
+		<!-- The Modal -->
 		<div id="myModal" class="modal">
-			<div class="starter-template">
-				<br> <br> <br> <br> <br> <br> <span
-					class="close">&times;</span>
-				<form class="form-horizontal" id="submit-form" method="post">
-					<div class="form-group form-group-md">
-						<label class="col-sm-2 control-label">Authorization
-							Endpoint:</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control"
-								id="authorizationTokenEndpoint"
-								value="${getAuthorizationTokenEndpoint}">
+			<!-- Modal Content -->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Open ID Connect Configuration</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" id="submit-form" method="post">
+						<div class="form-group form-group-md">
+							<label class="col-sm-2 control-label">Authorization
+								Endpoint:</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control"
+									id="authorizationTokenEndpoint"
+									value="${getAuthorizationTokenEndpoint}">
+							</div>
 						</div>
-					</div>
-					<div class="form-group form-group-md">
-						<label class="col-sm-2 control-label">Token Endpoint:</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="tokenEndpoint"
-								value="${ getTokenEndpoint }">
+						<div class="form-group form-group-md">
+							<label class="col-sm-2 control-label">Token Endpoint:</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="tokenEndpoint"
+									value="${ getTokenEndpoint }">
+							</div>
 						</div>
-					</div>
-					<div class="form-group form-group-md">
-						<label class="col-sm-2 control-label">Token Keys(JWK)
-							Endpoint:</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="tokenKeysEndpoint"
-								value="${ getTokenKeysEndpoint }">
+						<div class="form-group form-group-md">
+							<label class="col-sm-2 control-label">Token Keys(JWK)
+								Endpoint:</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="tokenKeysEndpoint"
+									value="${ getTokenKeysEndpoint }">
+							</div>
 						</div>
-					</div>
-					<div class="form-group form-group-md">
-						<label class="col-sm-2 control-label">Client ID:</label>
-						<div class="col-sm-10">
-							<input type=text class="form-control" id="clientId"
-								value="${ getClientId }">
+						<div class="form-group form-group-md">
+							<label class="col-sm-2 control-label">Client ID:</label>
+							<div class="col-sm-10">
+								<input type=text class="form-control" id="clientId"
+									value="${ getClientId }">
+							</div>
 						</div>
-					</div>
-					<div class="form-group form-group-md">
-						<label class="col-sm-2 control-label">Client Secret:</label>
-						<div class="col-sm-10">
-							<input type=text class="form-control" id="clientSecret"
-								value="${ getClientSecret }">
+						<div class="form-group form-group-md">
+							<label class="col-sm-2 control-label">Client Secret:</label>
+							<div class="col-sm-10">
+								<input type=text class="form-control" id="clientSecret"
+									value="${ getClientSecret }">
+							</div>
 						</div>
-					</div>
 
-					<div class="form-group form-group-md">
-						<label class="col-sm-2 control-label">Scope:</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" id="scope"
-								value="${ getScope }">
+						<div class="form-group form-group-md">
+							<label class="col-sm-2 control-label">Scope:</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="scope"
+									value="${ getScope }">
+							</div>
 						</div>
-					</div>
-					<div class="form-group form-group-md">
-						<label class="col-sm-2 control-label">Code Flow:</label>
-						<div class="col-sm-10">
-							<select id="authorization_Code_Flow">
-								<option value="Authorization_Code_Flow">Authorization
-									Code Flow</option>
-								<option value="Implicit_Code_Flow">Implicit Code Flow</option>
-							</select><span class="alert alert-warning glyphicon glyphicon-warning-sign">Open In
-								Private Window For Implicit Flow.</span>
+						<div class="form-group form-group-md">
+							<label class="col-sm-2 control-label">OAuth Code Flow:</label>
+							<div class="col-sm-10">
+								<select id="authorization_Code_Flow">
+									<option value="Authorization_Code_Flow">Authorization
+										Code Flow</option>
+									<option value="Implicit_Code_Flow">Implicit Code Flow</option>
+								</select> <br> <span
+									class="alert alert-warning glyphicon glyphicon-warning-sign">Open
+									In Private Window For Implicit Flow.</span>
+							</div>
 						</div>
-					</div>
+					</form>
+				</div>
+				<div class="modal-footer">
 					<div class="form-group">
 						<div class="col-sm-offset-2 col-sm-10">
 							<button type="submit" id="btn-submit"
 								class="btn btn-primary btn-md">Submit</button>
+
+							<button type="button" class="btn btn-default btn-md"
+								data-dismiss="modal">Close</button>
 						</div>
 					</div>
-				</form>
-				<!-- <form action ="/startOAuth" method="post">
-			<input id="submit" type="submit" value="Submit">
-			</form>
-	 -->
+					<!-- </form> -->
+				</div>
 			</div>
 		</div>
-
-	</div>
-	<div class="col-sm-10">
-		<label class="col-sm-2 control-label">Auth Code:</label> <input
-			type="text" class="form-control" id="exchangeToken" value="${code}" />
-	</div>
-	<button type="submit" id="exchangeButton"
-		class="btn btn-primary btn-md">Exchange</button>
-	<label class="col-sm-2 control-label" id="sigveri"></label>
-
-	<div class="col-sm-10">
-		<label class="col-sm-2 control-label">Auth Response:</label>
-		<textarea class="form-control" rows="5" id="requestURL"></textarea>
 	</div>
 
-	<div class="col-sm-10">
-		<label class="col-sm-2 control-label">Id Token:</label>
-		<textarea class="form-control" rows="5" id="id_token">${idToken}</textarea>
-	</div>
-	<button type="submit" id="verifyButton" class="btn btn-primary btn-md">Verify</button>
-	<div class="col-sm-10">
-		<label class="col-sm-2 control-label">Payload:</label>
-		<textarea class="form-control" rows="5" id="payload">${payloadIm}</textarea>
+	<div>
+		<div class="col-md-offset-2 col-md-8 ">
+			<label class="col-md-2 control-label "><span class="label label-info">Auth Code:</span></label>
+			<p class="col-md-offset-2 col-sm-offset-2"></p>
+			<p class="text-warning col-md-offset-2 col-md-2 col-md-offset-3">Your
+				Code is:</p>
+			<input type="text" class="form-control" id="exchangeToken"
+				value="${code}" />
+		</div>
+		<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
+		<div id="exchange" class="col-md-offset-5 col-md-2 col-md-offset-5">
+			<button type="submit" id="exchangeButton"
+				class="btn btn-primary btn-md">Exchange</button>
+			<label class="col-md-2 control-label" id="sigveri"></label>
+		</div>
+		<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
+		<p class="text-danger col-md-offset-2 col-md-8 col-md-offset-2">Now, we will exchange that access code for an id token,with our server making a request to the token endpoint</p>
+		<div class="col-md-offset-2 col-md-8 col-md-offset-2"
+			id="authResponse" style="display: none">
+			<label class="col-md-2 control-label"><span class="label label-info">Auth Response:</span></label>
+			<textarea class="form-control" rows="5" id="requestURL"></textarea>
+			<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
+			<p class="text-danger col-md-offset-2 col-md-8 col-md-offset-2">Now, we need to verify that the ID Token sent was from the correct place by validating the JWT's signature</p>
+		</div>
+		<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
+		<div class="col-md-offset-2 col-md-8 col-md-offset-2" id="idToken"
+			style="display: none">
+			<label class="col-md-2 control-label"><span class="label label-info">Id Token:</span></label>
+			<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
+			<p class="text-danger col-md-offset-2 col-md-8 col-md-offset-2">Your Id_Token is:</p>
+			<textarea class="form-control" rows="5" id="id_token">${idToken}</textarea>
+			<p class="text-danger col-md-offset-2 col-md-8 col-md-offset-2">This token is cryptographically signed with the RS256 algorithim.We'll fetch and use the Public Key From the Token Keys Endpoint to validate it.</p>
+		</div>
+		<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
+		<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
+		<div id="verify" class="col-md-offset-5 col-md-2 col-md-offset-5"
+			style="display: none">
+			<button type="submit" id="verifyButton"
+				class="btn btn-primary btn-md">Verify</button>
+			<label class="col-md-2 control-label" id="sigveri"></label>
+		</div>
+		<div class="col-md-offset-2 col-md-8 col-md-offset-2"
+			id="payLoadInput" style="display: none">
+			<label class="col-md-2 control-label"><span class="label label-info">Payload:</span></label>
+			<textarea class="form-control" rows="5" id="payload">${payloadIm}</textarea>
+		</div>
 	</div>
 	<br>
-
 	<script>
+		$("#exchange").click(function() {
+			$("#verify").show();
+			$("#authResponse").show();
+			$("#idToken").show();
+		});
+		$("#verify").click(function() {
+			$("#payLoadInput").show();
+		});
 		var modal = document.getElementById('myModal');
 
 		// Get the button that opens the modal
@@ -199,7 +337,7 @@
 
 		jQuery(document).ready(function($) {
 			$("#submit-form").submit(function(event) {
-				// Disble the search button
+				// Disble the Submit button
 				enableSubmitButton(false);
 				// Prevent the form from submitting via the browser.
 				event.preventDefault();
@@ -212,7 +350,6 @@
 						function() {
 							$
 									.get("exchange", function(data, status) {
-
 									})
 									.done(
 											function(data, status) {
@@ -243,45 +380,47 @@
 											});
 						});
 
-		function submitViaAjax() {
-			var dataString = {}
-			dataString["authorizationTokenEndpoint"] = $(
-					"#authorizationTokenEndpoint").val();
-			dataString["tokenEndpoint"] = $("#tokenEndpoint").val();
-			dataString["tokenKeysEndpoint"] = $("#tokenKeysEndpoint").val();
-			dataString["clientId"] = $("#clientId").val();
-			dataString["clientSecret"] = $("#clientSecret").val();
-			dataString["scope"] = $("#scope").val();
-			dataString["authorizationCodeFlow"] = $("#authorization_Code_Flow")
-					.val();
-			console.log(JSON.stringify(dataString));
-			$.ajax({
-				type : "POST",
-				headers : {
-					'Accept' : 'application/json',
-					'Content-Type' : 'application/json'
-				},
-				contentType : "application/json",
-				url : "startOAuth",
-				data : JSON.stringify(dataString),
-				dataType : 'json',
-				timeout : 100000,
-				success : function(data) {
-					windows.location = data;
-					console.log("SUCCESS: ", data);
-					display(data);
+		$("#btn-submit").click(
+				function() {
+					var dataString = {}
+					dataString["authorizationTokenEndpoint"] = $(
+							"#authorizationTokenEndpoint").val();
+					dataString["tokenEndpoint"] = $("#tokenEndpoint").val();
+					dataString["tokenKeysEndpoint"] = $("#tokenKeysEndpoint")
+							.val();
+					dataString["clientId"] = $("#clientId").val();
+					dataString["clientSecret"] = $("#clientSecret").val();
+					dataString["scope"] = $("#scope").val();
+					dataString["authorizationCodeFlow"] = $(
+							"#authorization_Code_Flow").val();
+					console.log(JSON.stringify(dataString));
+					$.ajax({
+						type : "POST",
+						headers : {
+							'Accept' : 'application/json',
+							'Content-Type' : 'application/json'
+						},
+						contentType : "application/json",
+						url : "startOAuth",
+						data : JSON.stringify(dataString),
+						dataType : 'json',
+						timeout : 100000,
+						success : function(data) {
+							windows.location = data;
+							console.log("SUCCESS: ", data);
+							display(data);
 
-				},
-				error : function(e) {
-					console.log("ERROR: ", e);
-					display(e);
-				},
-				done : function(e) {
-					console.log("DONE");
-					enableSearchButton(true);
-				}
-			});
-		}
+						},
+						error : function(e) {
+							console.log("ERROR: ", e);
+							display(e);
+						},
+						done : function(e) {
+							console.log("DONE");
+							enableSubmitButton(true);
+						}
+					})
+				});
 		function enableSubmitButton(flag) {
 			$("#btn-submit").prop("disabled", flag);
 		}

@@ -140,15 +140,15 @@ public class HomeController {
 
 	@RequestMapping(value = "/verify", method = RequestMethod.GET)
 	@ResponseBody
-	public String verify(Model model,HttpSession session) {
+	public String verify(Model model, HttpSession session) {
 
 		SignedJWT idToken = null;
 
 		try {
-			System.out.println("userIdToken = "+userIdToken);
-			if(userIdToken==null || userIdToken.length()<=0){
+			System.out.println("userIdToken = " + userIdToken);
+			if (userIdToken == null || userIdToken.length() <= 0) {
 				System.out.println("idTokenFromSession = " + session.getAttribute(ID_TOKEN_SESS_ATTR).toString());
-				userIdToken =session.getAttribute(ID_TOKEN_SESS_ATTR).toString();
+				userIdToken = session.getAttribute(ID_TOKEN_SESS_ATTR).toString();
 			}
 			idToken = SignedJWT.parse(userIdToken);
 		} catch (ParseException e1) {
