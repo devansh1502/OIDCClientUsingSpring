@@ -1,10 +1,13 @@
 C:\Program Files (x86)\Java\BootCampProject\OIDCClient\src\main\java\com\gslab\oidc\constants\QueryParamConstants.java
 C:\Program Files (x86)\Java\BootCampProject\OIDCClient\src\main\java\com\gslab\oidc\client\HomeController.java
 C:\Program Files (x86)\Java\BootCampProject\OIDCClient\src\main\java\com\gslab\oidc\Controller\AjaxController.java
-C:\Program Files (x86)\Java\BootCampProject\OIDCClient\src\main\java\com\gslab\oidc\model\OauthResponse.java
 C:\Program Files (x86)\Java\BootCampProject\OIDCClient\src\main\java\com\gslab\oidc\jsonViews\Views.java
+C:\Program Files (x86)\Java\BootCampProject\OIDCClient\src\main\java\com\gslab\oidc\client\ClientLogging.java
+C:\Program Files (x86)\Java\BootCampProject\OIDCClient\src\main\java\com\gslab\oidc\model\ResponseVerification.java
+C:\Program Files (x86)\Java\BootCampProject\OIDCClient\src\main\java\com\gslab\oidc\model\AjaxResponseBody.java
+C:\Program Files (x86)\Java\BootCampProject\OIDCClient\src\main\java\com\gslab\oidc\model\OauthResponse.java
+C:\Program Files (x86)\Java\BootCampProject\OIDCClient\src\main\java\com\gslab\oidc\constants\VerificationConstants.java
 C:\Program Files (x86)\Java\BootCampProject\OIDCClient\src\main\java\com\gslab\oidc\Config\SpringWebConfig.java
 C:\Program Files (x86)\Java\BootCampProject\OIDCClient\src\main\java\com\gslab\oidc\model\User.java
 C:\Program Files (x86)\Java\BootCampProject\OIDCClient\src\main\java\com\gslab\oidc\servlet3\MyWebIntializer.java
-C:\Program Files (x86)\Java\BootCampProject\OIDCClient\src\main\java\com\gslab\oidc\model\AjaxResponseBody.java
 C:\Program Files (x86)\Java\BootCampProject\OIDCClient\src\main\java\com\gslab\oidc\model\ClientRegistration.java

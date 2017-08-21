@@ -9,7 +9,7 @@
 body {
 	background: black !important;
 }
-	/* Adding !important forces the browser to overwrite the default style applied by Bootstrap */
+/* Adding !important forces the browser to overwrite the default style applied by Bootstrap */
 </style>
 <style>
 /* The Modal (background) */
@@ -26,7 +26,6 @@ body {
 	background-color: rgb(0, 0, 0); /* Fallback color */
 	background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
-
 /* Modal Content */
 .modal-content {
 	position: relative;
@@ -42,33 +41,27 @@ body {
 	animation-name: animatetop;
 	animation-duration: 0.4s
 }
-
 /* Add Animation */
 @
 -webkit-keyframes animatetop {
 	from {top: -300px;
 	opacity: 0
 }
-
 to {
 	top: 0;
 	opacity: 1
 }
-
 }
 @
 keyframes animatetop {
 	from {top: -300px;
 	opacity: 0
 }
-
 to {
 	top: 0;
 	opacity: 1
 }
-
 }
-
 /* The Close Button */
 .close {
 	color: white;
@@ -76,26 +69,22 @@ to {
 	font-size: 28px;
 	font-weight: bold;
 }
-
 .close:hover, .close:focus {
 	color: #000;
 	text-decoration: none;
 	cursor: pointer;
 }
-
 .modal-header {
 	padding: 2px 16px;
-	background-color: #5cb85c;
+	background-color: #406d95;
 	color: white;
 }
-
 .modal-body {
 	padding: 2px 16px;
 }
-
 .modal-footer {
 	padding: 2px 16px;
-	background-color: #5cb85c;
+	background-color: #406d95;
 	color: white;
 }
 </style>
@@ -113,7 +102,7 @@ to {
 <nav class="navbar navbar-inverse">
 	<div class="container">
 		<div class="navbar-header">
-			<a class="navbar-brand" href="#">OIDC-Client</a>
+			<a class="navbar-brand" href="#"><!-- <img src="//pulse.gslab.com/wp-content/uploads/2017/05/gslogo.png" style="display: inline-block;"><span style="display: inline-block; width: 50px; height:50px"> -->OIDC-Client</span></a>
 		</div>
 	</div>
 </nav>
@@ -146,14 +135,14 @@ to {
 							<div class="col-sm-10">
 								<input type="text" class="form-control"
 									id="authorizationTokenEndpoint"
-									value="${getAuthorizationTokenEndpoint}">
+									value="">
 							</div>
 						</div>
 						<div class="form-group form-group-md">
 							<label class="col-sm-2 control-label">Token Endpoint:</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="tokenEndpoint"
-									value="${ getTokenEndpoint }">
+									value="">
 							</div>
 						</div>
 						<div class="form-group form-group-md">
@@ -161,21 +150,21 @@ to {
 								Endpoint:</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="tokenKeysEndpoint"
-									value="${ getTokenKeysEndpoint }">
+									value="">
 							</div>
 						</div>
 						<div class="form-group form-group-md">
 							<label class="col-sm-2 control-label">Client ID:</label>
 							<div class="col-sm-10">
 								<input type=text class="form-control" id="clientId"
-									value="${ getClientId }">
+									value="">
 							</div>
 						</div>
 						<div class="form-group form-group-md">
 							<label class="col-sm-2 control-label">Client Secret:</label>
 							<div class="col-sm-10">
 								<input type=text class="form-control" id="clientSecret"
-									value="${ getClientSecret }">
+									value="">
 							</div>
 						</div>
 
@@ -183,7 +172,7 @@ to {
 							<label class="col-sm-2 control-label">Scope:</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="scope"
-									value="${ getScope }">
+									value="">
 							</div>
 						</div>
 						<div class="form-group form-group-md">
@@ -218,7 +207,7 @@ to {
 
 	<div>
 		<div class="col-md-offset-2 col-md-8 ">
-			<label class="col-md-2 control-label">Auth Code:</label>
+			<label class="col-md-2 control-label "><span class="label label-info">Auth Code:</span></label>
 			<p class="col-md-offset-2 col-sm-offset-2"></p>
 			<p class="text-warning col-md-offset-2 col-md-2 col-md-offset-3">Your
 				Code is:</p>
@@ -229,19 +218,27 @@ to {
 		<div id="exchange" class="col-md-offset-5 col-md-2 col-md-offset-5">
 			<button type="submit" id="exchangeButton"
 				class="btn btn-primary btn-md">Exchange</button>
-			<label class="col-md-2 control-label" id="sigveri"></label>
+			
 		</div>
 		<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
+		<p class="text-danger col-md-offset-2 col-md-8 col-md-offset-2">Now, we will exchange that access code for an id token,with our server making a request to the token endpoint</p>
 		<div class="col-md-offset-2 col-md-8 col-md-offset-2"
 			id="authResponse" style="display: none">
-			<label class="col-md-2 control-label">Auth Response:</label>
+			<label class="col-md-2 control-label"><span class="label label-info">Auth Response:</span></label>
 			<textarea class="form-control" rows="5" id="requestURL"></textarea>
+			<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
+			<p class="text-danger col-md-offset-2 col-md-8 col-md-offset-2">Now, we need to verify that the ID Token sent was from the correct source by validating the JWT's signature</p>
 		</div>
 		<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
 		<div class="col-md-offset-2 col-md-8 col-md-offset-2" id="idToken"
 			style="display: none">
-			<label class="col-md-2 control-label">Id Token:</label>
+			<label class="col-md-2 control-label"><span class="label label-info">Id Token:</span></label>
+			<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
+			<p class="text-danger col-md-offset-2 col-md-8 col-md-offset-2">Your Id_Token is:</p>
 			<textarea class="form-control" rows="5" id="id_token">${idToken}</textarea>
+			<p class="text-danger col-md-offset-2 col-md-8 col-md-offset-2">Your Id_Token Header's are:</p>
+			<textarea class="form-control" rows="1" id="id_token_header"></textarea>
+			<p class="text-danger col-md-offset-2 col-md-8 col-md-offset-2">This token is cryptographically signed with the RS256 algorithim.We'll fetch and use the Public Key From the Token Keys Endpoint to validate it.</p>
 		</div>
 		<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
 		<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
@@ -253,12 +250,32 @@ to {
 		</div>
 		<div class="col-md-offset-2 col-md-8 col-md-offset-2"
 			id="payLoadInput" style="display: none">
-			<label class="col-md-2 control-label">Payload:</label>
+			<label class="col-md-2 control-label"><span class="label label-info">Payload:</span></label>
 			<textarea class="form-control" rows="5" id="payload">${payloadIm}</textarea>
 		</div>
 	</div>
 	<br>
 	<script>
+	
+	
+		$.get("/OIDCClient/getconfig", function(result) {
+			if (result !="") {
+				console.log(result);
+				var str = JSON.parse(JSON.stringify(result));
+				$('#authorizationTokenEndpoint').val(str['authorizationTokenEndpoint']);
+				$('#tokenEndpoint').val(str['tokenEndpoint']);
+				$('#tokenKeysEndpoint').val(str['tokenKeysEndpoint']);
+				$('#clientId').val(str['clientId']);
+				$('#clientSecret').val(str['clientSecret']);
+				$('#scope').val(str['scope']);
+				
+				//find it with what is implicit or explicit select that in list box using document.getelement.selected etc...
+			} else {
+				console.log("new session");
+			}
+
+		});
+
 		$("#exchange").click(function() {
 			$("#verify").show();
 			$("#authResponse").show();
@@ -268,10 +285,8 @@ to {
 			$("#payLoadInput").show();
 		});
 		var modal = document.getElementById('myModal');
-
 		// Get the button that opens the modal
 		var btn = document.getElementById("config");
-
 		// Get the <span> element that closes the modal
 		var span = document.getElementsByClassName("close")[0];
 		// When the user clicks the button, open the modal 
@@ -288,9 +303,7 @@ to {
 				modal.style.display = "none";
 			}
 		}
-
 		if (window.location.hash != "") {
-
 			var string = window.location.hash.substr(1);
 			$("#requestURL").val(string);
 			var query = string.split('&');
@@ -311,15 +324,18 @@ to {
 				}
 			}
 			$("#id_token").val(idTokenVal);
-			$.post('setIdToken', {
-				"idTokenResp" : idTokenVal
-			}).done(function(data, status) {
-				console.log("response = " + data);
-			});
-
+			$
+					.post('setIdToken', {
+						"idTokenResp" : idTokenVal
+					})
+					.done(
+							function(data, status) {
+								$("#id_token_header").val(atob((data
+										.split('.'))[0]));
+								console.log("response = " + data);
+							});
 			/* var urlsend = decodeURIComponent(idurl) + '?access_token=' + access_token;
 			console.log("hello"); */
-
 			/* $.post("/OIDCClient/expayload", {
 				payload : urlsend
 			}, function(data, status) {
@@ -328,7 +344,6 @@ to {
 			});
 			 */
 		}
-
 		jQuery(document).ready(function($) {
 			$("#submit-form").submit(function(event) {
 				// Disble the Submit button
@@ -338,7 +353,6 @@ to {
 				submitViaAjax();
 			});
 		});
-
 		$("#exchangeButton")
 				.click(
 						function() {
@@ -348,15 +362,14 @@ to {
 									.done(
 											function(data, status) {
 												var str = JSON.parse(data);
-												document
-														.getElementById("requestURL").value = JSON
-														.stringify(str,
+												document.getElementById("requestURL").value = JSON.stringify(str,
 																undefined, 4);
-												document
-														.getElementById("id_token").value = str["id_token"];
+												document.getElementById("id_token").value = str["id_token"];
+												document.getElementById("id_token_header").value = atob((str["id_token"]
+														.split('.'))[0]);
+
 											});
 						});
-
 		$("#verifyButton")
 				.click(
 						function() {
@@ -364,16 +377,16 @@ to {
 									.get(
 											"verify",
 											function(data, status) {
-												var str = JSON.parse(data);
-												document
-														.getElementById("payload").value = JSON
-														.stringify(str,
-																undefined, 4);
-												document
-														.getElementById("sigveri").value = "Signature Verified";
+												var idnt = "ID TOKEN INVAILD";
+												if (idnt != data) {
+													var str = JSON.parse(data);
+													$("#payload").val(JSON.stringify(str,undefined,4));
+													$("#sigveri").val("Signature Verified");
+												} else {
+													$("#payload").val(idnt);
+												}
 											});
 						});
-
 		$("#btn-submit").click(
 				function() {
 					var dataString = {}
@@ -403,7 +416,6 @@ to {
 							windows.location = data;
 							console.log("SUCCESS: ", data);
 							display(data);
-
 						},
 						error : function(e) {
 							console.log("ERROR: ", e);

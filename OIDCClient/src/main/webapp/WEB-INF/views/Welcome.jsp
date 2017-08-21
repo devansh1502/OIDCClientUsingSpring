@@ -6,9 +6,6 @@
 <html lang="en">
 <head>
 <style type="text/css">
-body {
-	background: black !important;
-}
 /* Adding !important forces the browser to overwrite the default style applied by Bootstrap */
 </style>
 <style>
@@ -26,7 +23,6 @@ body {
 	background-color: rgb(0, 0, 0); /* Fallback color */
 	background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
-
 /* Modal Content */
 .modal-content {
 	position: relative;
@@ -42,33 +38,27 @@ body {
 	animation-name: animatetop;
 	animation-duration: 0.4s
 }
-
 /* Add Animation */
 @
 -webkit-keyframes animatetop {
 	from {top: -300px;
 	opacity: 0
 }
-
 to {
 	top: 0;
 	opacity: 1
 }
-
 }
 @
 keyframes animatetop {
 	from {top: -300px;
 	opacity: 0
 }
-
 to {
 	top: 0;
 	opacity: 1
 }
-
 }
-
 /* The Close Button */
 .close {
 	color: white;
@@ -76,26 +66,22 @@ to {
 	font-size: 28px;
 	font-weight: bold;
 }
-
 .close:hover, .close:focus {
 	color: #000;
 	text-decoration: none;
 	cursor: pointer;
 }
-
 .modal-header {
 	padding: 2px 16px;
-	background-color: #5cb85c;
+	background-color: #406d95;
 	color: white;
 }
-
 .modal-body {
 	padding: 2px 16px;
 }
-
 .modal-footer {
 	padding: 2px 16px;
-	background-color: #5cb85c;
+	background-color: #406d95;
 	color: white;
 }
 </style>
@@ -108,12 +94,13 @@ to {
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
 	
 </script>
-
+<spring:url value="/resources/core/gslab_favicon.png" var = "favicon" />
+<link rel="shortcut icon" type="image/png" href="${favicon}" />
 </head>
-<nav class="navbar navbar-inverse">
+<nav class="navbar navbar-inverse" style="background-color: #060a5a">
 	<div class="container">
 		<div class="navbar-header">
-			<a class="navbar-brand" href="#">OIDC-Client</a>
+			<a class="navbar-brand" href="#"><!-- <img src="//pulse.gslab.com/wp-content/uploads/2017/05/gslogo.png" style="display: inline-block;"><span style="display: inline-block; width: 50px; height:50px"> -->OIDC-Client<!-- </span> --></a>
 		</div>
 	</div>
 </nav>
@@ -146,14 +133,14 @@ to {
 							<div class="col-sm-10">
 								<input type="text" class="form-control"
 									id="authorizationTokenEndpoint"
-									value="${getAuthorizationTokenEndpoint}">
+									value="">
 							</div>
 						</div>
 						<div class="form-group form-group-md">
 							<label class="col-sm-2 control-label">Token Endpoint:</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="tokenEndpoint"
-									value="${ getTokenEndpoint }">
+									value="">
 							</div>
 						</div>
 						<div class="form-group form-group-md">
@@ -161,21 +148,21 @@ to {
 								Endpoint:</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="tokenKeysEndpoint"
-									value="${ getTokenKeysEndpoint }">
+									value="">
 							</div>
 						</div>
 						<div class="form-group form-group-md">
 							<label class="col-sm-2 control-label">Client ID:</label>
 							<div class="col-sm-10">
 								<input type=text class="form-control" id="clientId"
-									value="${ getClientId }">
+									value="">
 							</div>
 						</div>
 						<div class="form-group form-group-md">
 							<label class="col-sm-2 control-label">Client Secret:</label>
 							<div class="col-sm-10">
 								<input type=text class="form-control" id="clientSecret"
-									value="${ getClientSecret }">
+									value="">
 							</div>
 						</div>
 
@@ -183,7 +170,7 @@ to {
 							<label class="col-sm-2 control-label">Scope:</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="scope"
-									value="${ getScope }">
+									value="">
 							</div>
 						</div>
 						<div class="form-group form-group-md">
@@ -220,7 +207,7 @@ to {
 		<div class="col-md-offset-2 col-md-8 ">
 			<label class="col-md-2 control-label "><span class="label label-info">Auth Code:</span></label>
 			<p class="col-md-offset-2 col-sm-offset-2"></p>
-			<p class="text-warning col-md-offset-2 col-md-2 col-md-offset-3">Your
+			<p class="text-info col-md-offset-2 col-md-2 col-md-offset-3">Your
 				Code is:</p>
 			<input type="text" class="form-control" id="exchangeToken"
 				value="${code}" />
@@ -229,25 +216,25 @@ to {
 		<div id="exchange" class="col-md-offset-5 col-md-2 col-md-offset-5">
 			<button type="submit" id="exchangeButton"
 				class="btn btn-primary btn-md">Exchange</button>
-			<label class="col-md-2 control-label" id="sigveri"></label>
+			
 		</div>
 		<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
-		<p class="text-danger col-md-offset-2 col-md-8 col-md-offset-2">Now, we will exchange that access code for an id token,with our server making a request to the token endpoint</p>
+		<p class="text-info col-md-offset-2 col-md-8 col-md-offset-2">Now, we will exchange that access code for an id token,with our server making a request to the token endpoint</p>
 		<div class="col-md-offset-2 col-md-8 col-md-offset-2"
 			id="authResponse" style="display: none">
 			<label class="col-md-2 control-label"><span class="label label-info">Auth Response:</span></label>
 			<textarea class="form-control" rows="5" id="requestURL"></textarea>
 			<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
-			<p class="text-danger col-md-offset-2 col-md-8 col-md-offset-2">Now, we need to verify that the ID Token sent was from the correct place by validating the JWT's signature</p>
+			<p class="text-info col-md-offset-2 col-md-8 col-md-offset-2">Now, we need to verify that the ID Token sent was from the correct source by validating the JWT's signature</p>
 		</div>
 		<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
 		<div class="col-md-offset-2 col-md-8 col-md-offset-2" id="idToken"
 			style="display: none">
 			<label class="col-md-2 control-label"><span class="label label-info">Id Token:</span></label>
 			<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
-			<p class="text-danger col-md-offset-2 col-md-8 col-md-offset-2">Your Id_Token is:</p>
+			<p class="text-info col-md-offset-2 col-md-8 col-md-offset-2">Your Id_Token is:</p>
 			<textarea class="form-control" rows="5" id="id_token">${idToken}</textarea>
-			<p class="text-danger col-md-offset-2 col-md-8 col-md-offset-2">This token is cryptographically signed with the RS256 algorithim.We'll fetch and use the Public Key From the Token Keys Endpoint to validate it.</p>
+			<p class="text-info col-md-offset-2 col-md-8 col-md-offset-2">This token is cryptographically signed.We'll fetch and use the Public Key From the Token Keys Endpoint to validate it.</p>
 		</div>
 		<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
 		<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
@@ -258,6 +245,11 @@ to {
 			<label class="col-md-2 control-label" id="sigveri"></label>
 		</div>
 		<div class="col-md-offset-2 col-md-8 col-md-offset-2"
+			id="tokenHeader" style="display: none">
+		<p class="text-info col-md-offset-2 col-md-8 col-md-offset-2">Your Id_Token Header's are:</p>
+			<textarea class="form-control" rows="1" id="id_token_header"></textarea>
+         </div>	
+		<div class="col-md-offset-2 col-md-8 col-md-offset-2"
 			id="payLoadInput" style="display: none">
 			<label class="col-md-2 control-label"><span class="label label-info">Payload:</span></label>
 			<textarea class="form-control" rows="5" id="payload">${payloadIm}</textarea>
@@ -265,6 +257,43 @@ to {
 	</div>
 	<br>
 	<script>
+	
+	
+		$.get("/OIDCClient/getconfig", function(result) {
+			/* if (result !="") {
+				console.log(result);
+				var str = JSON.parse(JSON.stringify(result));
+				$('#authorizationTokenEndpoint').val(str['authorizationTokenEndpoint']);
+				$('#tokenEndpoint').val(str['tokenEndpoint']);
+				$('#tokenKeysEndpoint').val(str['tokenKeysEndpoint']);
+				$('#clientId').val(str['clientId']);
+				$('#clientSecret').val(str['clientSecret']);
+				$('#scope').val(str['scope']);
+				$('#authorization_Code_Flow').val(str['authorizationCodeFlow']);
+				
+				//find it with what is implicit or explicit select that in list box using document.getelement.selected etc...
+			} else {
+				console.log("new session");
+			} */
+
+		}).done(function(result) {
+			if (result !="") {
+				console.log(result);
+				var str = JSON.parse(JSON.stringify(result));
+				$('#authorizationTokenEndpoint').val(str['authorizationTokenEndpoint']);
+				$('#tokenEndpoint').val(str['tokenEndpoint']);
+				$('#tokenKeysEndpoint').val(str['tokenKeysEndpoint']);
+				$('#clientId').val(str['clientId']);
+				$('#clientSecret').val(str['clientSecret']);
+				$('#scope').val(str['scope']);
+				$('#authorization_Code_Flow').val(str['authorizationCodeFlow']);
+				
+				//find it with what is implicit or explicit select that in list box using document.getelement.selected etc...
+			} else {
+				console.log("new session");
+			}
+		});
+
 		$("#exchange").click(function() {
 			$("#verify").show();
 			$("#authResponse").show();
@@ -274,10 +303,8 @@ to {
 			$("#payLoadInput").show();
 		});
 		var modal = document.getElementById('myModal');
-
 		// Get the button that opens the modal
 		var btn = document.getElementById("config");
-
 		// Get the <span> element that closes the modal
 		var span = document.getElementsByClassName("close")[0];
 		// When the user clicks the button, open the modal 
@@ -294,9 +321,7 @@ to {
 				modal.style.display = "none";
 			}
 		}
-
 		if (window.location.hash != "") {
-
 			var string = window.location.hash.substr(1);
 			$("#requestURL").val(string);
 			var query = string.split('&');
@@ -313,19 +338,28 @@ to {
 					console.log(param[0]);
 					idTokenVal = param[1];
 					console.log(param[1]);
+					$("#verify").show();
+					$("#authResponse").show();
+					$("#id_token").val(idTokenVal);
+					$("#idToken").show();
+					$("#id_token_header").val(atob((idTokenVal
+							.split('.'))[0]));
+					$('#id_token_header').show();
 					break;
 				}
 			}
-			$("#id_token").val(idTokenVal);
+			
 			$.post('setIdToken', {
-				"idTokenResp" : idTokenVal
-			}).done(function(data, status) {
-				console.log("response = " + data);
-			});
-
+						"idTokenResp" : idTokenVal
+					})
+					.done(
+							function(data, status) {
+								/* $("#id_token_header").val(atob((data
+										.split('.'))[0])); */
+								console.log("response = " + data);
+							});
 			/* var urlsend = decodeURIComponent(idurl) + '?access_token=' + access_token;
 			console.log("hello"); */
-
 			/* $.post("/OIDCClient/expayload", {
 				payload : urlsend
 			}, function(data, status) {
@@ -334,8 +368,9 @@ to {
 			});
 			 */
 		}
-
 		jQuery(document).ready(function($) {
+//			$('#myModal').show();
+			
 			$("#submit-form").submit(function(event) {
 				// Disble the Submit button
 				enableSubmitButton(false);
@@ -344,7 +379,6 @@ to {
 				submitViaAjax();
 			});
 		});
-
 		$("#exchangeButton")
 				.click(
 						function() {
@@ -353,16 +387,24 @@ to {
 									})
 									.done(
 											function(data, status) {
-												var str = JSON.parse(data);
-												document
-														.getElementById("requestURL").value = JSON
-														.stringify(str,
-																undefined, 4);
-												document
-														.getElementById("id_token").value = str["id_token"];
+												console.log("exchange button on click = "+data);
+												console.log("status = "+status);
+												try {
+													var str = JSON.parse(data);
+													document.getElementById("requestURL").value = JSON.stringify(str,
+																	undefined, 4);
+													document.getElementById("id_token").value = str["id_token"];
+													document.getElementById("id_token_header").value = atob((str["id_token"]
+															.split('.'))[0]);
+												} catch(err) {
+													$('#requestURL').val(data);
+													$('#verify').hide();
+													$('#idToken').hide();
+													$('#payLoadInput').hide();
+;												}
+
 											});
 						});
-
 		$("#verifyButton")
 				.click(
 						function() {
@@ -370,16 +412,16 @@ to {
 									.get(
 											"verify",
 											function(data, status) {
-												var str = JSON.parse(data);
-												document
-														.getElementById("payload").value = JSON
-														.stringify(str,
-																undefined, 4);
-												document
-														.getElementById("sigveri").value = "Signature Verified";
+												var idnt = "ID TOKEN INVAILD";
+												if (idnt != data) {
+													var str = JSON.parse(data);
+													$("#payload").val(JSON.stringify(str,undefined,4));
+													$("#sigveri").val("Signature Verified");
+												} else {
+													$("#payload").val(idnt);
+												}
 											});
 						});
-
 		$("#btn-submit").click(
 				function() {
 					var dataString = {}
@@ -408,12 +450,13 @@ to {
 						success : function(data) {
 							windows.location = data;
 							console.log("SUCCESS: ", data);
-							display(data);
-
+							 $('#myModal').hide();
+							//display(data);
 						},
 						error : function(e) {
 							console.log("ERROR: ", e);
-							display(e);
+							$('#myModal').hide();
+							//display(e);
 						},
 						done : function(e) {
 							console.log("DONE");
