@@ -11,6 +11,7 @@ import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -37,7 +38,7 @@ import com.gslab.oidc.constants.QueryParamConstants;
 import com.gslab.oidc.constants.VerificationConstants;
 import com.gslab.oidc.jsonViews.Views;
 import com.gslab.oidc.model.ClientRegistration;
-import com.gslab.oidc.model.ResponseVerification;	
+import com.gslab.oidc.model.ResponseVerification;
 import com.nimbusds.jose.JOSEException;
 
 import com.nimbusds.jose.JWSVerifier;
@@ -47,65 +48,63 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.SignedJWT;
 import net.minidev.json.JSONObject.*;
 
-
+/**
+ * 
+ * @author GS-1547
+ *
+ */
 @Controller
 public class HomeController {
 
-	
 	ClientLogging log = new ClientLogging();
 	private String redirectUri = "https://oidcclient.gslab.com:8443/OIDCClient/startOAuth/_callback";
 
 	private String authUrl = null;
 	private BigInteger nonce = null;
-	String sessionExchangeCode = "";
+	private String sessionExchangeCode = "";
 
 	private String userIdToken = null;
 	private ClientRegistration cR = null;
-	HttpSession newsession;
+	private HttpSession newsession;
 	private static final String ID_TOKEN_INV = "ID TOKEN INVAILD";
 	private static final String CLIENT_REG_SESS_ATTR = "clientRegistration";
 	private static final String AUTH_CODE_SESS_ATTR = "authCode";
 	private static final String ID_TOKEN_SESS_ATTR = "idToken";
 	Logger logger = log.logger;
-     
-    
+
 	/**
 	 * This Method fetchs Client Registration Json data for the Welcome.jsp
 	 * 
-	 * @param session
+	 * @param session used session for storing client config
 	 * @return ClientRegistration
-	 */	
+	 */
 	@RequestMapping(value = "/getconfig", method = RequestMethod.GET)
 	@ResponseBody
-	public ClientRegistration getconfig(HttpSession session) {	
+	public ClientRegistration getconfig(HttpSession session) {
 		ClientRegistration cR = (ClientRegistration) session.getAttribute(CLIENT_REG_SESS_ATTR);
-		//logger.info(AUTH_CODE_SESS_ATTR);
 		if (cR != null) {
-		return cR;
+			return cR;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * This Method invokes Welcome.jsp page for Client to Fetch/fill client data
 	 * and also set's the Exchange Code when Client's Callback is called
 	 * 
-	 * @param Model
-	 *            Model class containing the attributes required for managing
-	 *            the client registration details.
-	 * @param session
-	 * @return String
-	 */	
+	 * @param Model Model class containing the attributes required for managing the client registration details.
+	 * @param session used session for storing client config,authCode and Id token 
+	 * @return String name of the jsp page to return to 
+	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Model model, HttpSession session) {
 		// get ClientRegistration from current session of Client
-
-        // This block configure the logger with handler and formatter  
+		// This block configure the logger with handler and formatter
 		ClientRegistration cR = (ClientRegistration) session.getAttribute(CLIENT_REG_SESS_ATTR);
 		userIdToken = null;
-		//logger.info("welcome");
+		
 		if (cR != null) {
-			
+
 			if (session.getAttribute(AUTH_CODE_SESS_ATTR) != null) {
 				// Only Set's Value if Exchange Code is given for a Session
 				// Client
@@ -121,13 +120,13 @@ public class HomeController {
 	}
 
 	/**
-	 * This Method ensure's that Auth/Implicit Mode the ID_TOKEN is set for 
+	 * This Method ensure's that Auth/Implicit Mode the ID_TOKEN is set for
 	 * verification in Client's Session
 	 * 
 	 * @param idTokenResp
 	 *            Response from client Side to Set the attribute.
-	 * @param session
-	 * @return String
+	 * @param session used session for storing id token  
+	 * @return String status of storage of ID token
 	 */
 	@RequestMapping(value = "/setIdToken", method = RequestMethod.POST)
 	@ResponseBody
@@ -138,12 +137,14 @@ public class HomeController {
 	}
 
 	/**
-	 * This Method Extract payload for Implicit mode and handles if fetching is failed.
+	 * This Method Extract payload for Implicit mode and handles if fetching is
+	 * failed.
 	 * 
 	 * @param payload
-	 *            Response Payload Url from Welcome.jsp for Extracting specific data of user.
-	 * @param session
-	 * @return String
+	 *            Response Payload Url from Welcome.jsp for Extracting specific
+	 *            data of user.
+	 * @param session used session for storing client config
+	 * @return String returns error for response not received
 	 */
 	@RequestMapping(value = "/expayload", method = RequestMethod.POST)
 	@ResponseBody
@@ -152,12 +153,12 @@ public class HomeController {
 		try {
 
 			// Extract the Payload URL from #accessToken=..&Id=.... for
-			// retriving the Payload Data
+			// retrieving the Payload Data
 			String payloadurl = URLDecoder.decode(payload.substring(8, payload.length()), "UTF-8");
 
-			System.out.println("===========IMPLICIT Payload URL===========");
-			System.out.println(payloadurl);
-			System.out.println("===========IMPLICIT Payload URL===========");
+			logger.info("===========IMPLICIT Payload URL===========");
+			logger.info(payloadurl);
+			logger.info("===========IMPLICIT Payload URL===========");
 
 			HttpClient httpclient = new HttpClient();
 
@@ -166,37 +167,32 @@ public class HomeController {
 			try {
 				httpclient.executeMethod(get);
 
-				System.out.println("===========IMPLICIT Response Data===========");
-				System.out.println(get.getResponseBodyAsString());
-				System.out.println("===========IMPLICIT Response Data===========");
+				logger.info("===========IMPLICIT Response Data===========");
+				logger.info(get.getResponseBodyAsString());
+				logger.info("===========IMPLICIT Response Data===========");
 				// Giving Response Back to Client for Payload
 				return (get.getResponseBodyAsString()).toString();
-			} catch (HttpException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (HttpException httpException1) {
+				logger.log(Level.WARNING,"Http Exception occurred while getting response back to the client for payload",httpException1);
+			} catch (IOException ioException4) {
+				logger.log(Level.WARNING,"IO Exception occurred while getting response back to the client for payload",ioException4);
 			}
-		} catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			
+		} catch (UnsupportedEncodingException unsupportedEncodingException) {
+			logger.log(Level.SEVERE,"Exception occurred while decoding the payload",unsupportedEncodingException);
 		}
 
 		return "Your response is not recieved, Try Again.";
 	}
 
 	/**
-	 * This Method verifies Auth response on the Backend Side using 12 Steps Verifications
-	 * and also Works for any certain signature algorithms
+	 * This Method verifies Auth response on the Backend Side using 12 Steps
+	 * Verifications and also Works for any certain signature algorithms
 	 * 
-	 * @param Model
-	 *            Model class containing the attributes required for managing
-	 *            the client registration details.
-	 * @param session
-	 * @return String
-	 * @throws ServletException
-	 * @throws IOException
+	 * @param Model Model class containing the attributes required for managing the client registration details.
+	 * @param session used session for storing client config
+	 * @return String used session for storing client config
+	 * @throws IOException throws exception while communicating with JWK Endpoint.
 	 */
 	@RequestMapping(value = "/verify", method = RequestMethod.GET)
 	@ResponseBody
@@ -205,87 +201,80 @@ public class HomeController {
 		SignedJWT idToken = null;
 		ResponseVerification vresp = new ResponseVerification();
 		Date today = new Date();
-		
+
 		ClientRegistration cR = (ClientRegistration) session.getAttribute(CLIENT_REG_SESS_ATTR);
-		
+
 		try {
-			System.out.println("userIdToken = " + userIdToken);
 			if (userIdToken == null || userIdToken.length() <= 0) {
-				System.out.println("idTokenFromSession = " + session.getAttribute(ID_TOKEN_SESS_ATTR).toString());
+
 				userIdToken = session.getAttribute(ID_TOKEN_SESS_ATTR).toString();
 			}
 			idToken = SignedJWT.parse(userIdToken);
-		} catch (ParseException e1) {
+		} catch (ParseException parseException1) {
 
-			e1.printStackTrace();
+		logger.log(Level.WARNING,parseException1.getMessage(), parseException1);
 		}
 		// Extract Key ID from the Current ID Token
-		
-		//Verifications of 12 Steps except azp 
-		
+
+		// Verifications of 12 Steps except azp
+
 		net.minidev.json.JSONObject authResponse;
 		authResponse = idToken.getPayload().toJSONObject();
-		
+
 		vresp.setIss(authResponse.get(VerificationConstants.ISSUER).toString());
 		vresp.setAud(authResponse.get(VerificationConstants.AUD).toString());
-		vresp.setExp(((long)(authResponse.get(VerificationConstants.EXP))*1000));
+		vresp.setExp(((long) (authResponse.get(VerificationConstants.EXP)) * 1000));
 		vresp.setNonce_resp(authResponse.get(VerificationConstants.NONCE).toString());
-		vresp.setIat(((long) (authResponse.get(VerificationConstants.IAT)) *1000));
-		
-		String issmatch = null ;
-		
+		vresp.setIat(((long) (authResponse.get(VerificationConstants.IAT)) * 1000));
+
+		String issmatch = null;
+
 		try {
-			System.out.println(cR.getAuthorizationTokenEndpoint());
 			URL aURL = new URL((cR.getAuthorizationTokenEndpoint()));
 			issmatch = aURL.getHost();
-			if(!vresp.getIss().contains(issmatch))
-			{
-				System.out.println("iss is wrong ");
-				return ID_TOKEN_INV; 
-			}
-			if(!vresp.getAud().equals(cR.getClientId())){
-				System.out.println("client id is wrong ");
-				return ID_TOKEN_INV; 
-			}
-			if(vresp.getIat()>today.getTime()){
-				System.out.println("JWT arrival Passed already");
+			if (!vresp.getIss().contains(issmatch)) {
+				logger.info("iss is wrong ");
 				return ID_TOKEN_INV;
 			}
-			
-			if(vresp.getExp()<today.getTime()){
-				System.out.println("Expired Already");
+			if (!vresp.getAud().equals(cR.getClientId())) {
+				logger.info("client id is wrong ");
 				return ID_TOKEN_INV;
 			}
-			
-			if(!(vresp.getNonce_resp().equals(nonce.toString(16))))
-			{
-				System.out.println("nonce invalid");
-				return ID_TOKEN_INV; 
+			if (vresp.getIat() > today.getTime()) {
+				logger.info("JWT arrival Passed already");
+				return ID_TOKEN_INV;
 			}
-		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+
+			if (vresp.getExp() < today.getTime()) {
+				logger.info("Expired Already");
+				return ID_TOKEN_INV;
+			}
+
+			if (!(vresp.getNonce_resp().equals(nonce.toString(16)))) {
+				logger.info("nonce invalid");
+				return ID_TOKEN_INV;
+			}
+		} catch (MalformedURLException malformedURLException1) {
+			logger.log(Level.WARNING,"Exception occurred while getting the URL from host",malformedURLException1);
 		}
-		
+
 		String kid = idToken.getHeader().getKeyID();
-		
+
 		JWKSet jwks = null;
 		try {
 
 			try {
 				// Load the Key Id's From the Token Key URL
 				jwks = JWKSet.load(new URL(cR.getTokenKeysEndpoint()));
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (MalformedURLException malformedURLException) {
+				logger.log(Level.WARNING, "Exception occurred while loading keys from JWK Key URL",
+						malformedURLException);
+			} catch (IOException ioException) {
+			logger.log(Level.WARNING, "IO Exception Occurred while loading keys from JWK Key URL" ,ioException);
 			}
 
-		} catch (ParseException e) {
-
-			e.printStackTrace();
+		} catch (ParseException parseException) {
+			logger.log(Level.WARNING,parseException.getMessage(), parseException);
 		}
 		// Match the Key Id of ID token with Loaded Key Id's of Token Key URL
 		RSAKey jwk = (RSAKey) jwks.getKeyByKeyId(kid);
@@ -293,27 +282,24 @@ public class HomeController {
 		JWSVerifier verifier = null;
 		try {
 			verifier = new RSASSAVerifier(jwk);
-		} catch (JOSEException e) {
-			e.printStackTrace();
+		} catch (JOSEException joseException) {
+			logger.log(Level.WARNING,"JOSE Exception while matching the key Id of ID token",joseException);
 		}
 		try {
 			// Verify That Signature matches out with payload using Signing
 			// Algorithms
 			if (idToken.verify(verifier)) {
-				System.out.println("=========== AUTH_ID_TOKEN===========");
-				System.out.println("ID Token Header: " + idToken.getHeader().toString());
-				System.out.println("ID Token Payload: " + idToken.getPayload().toString());
-				System.out.println("ID Token Signature = " + idToken.getSignature().toString());
-				System.out.println("valid signature");
-				System.out.println("===========AUTH_ID_TOKEN===========");
+				logger.info("=========== AUTH_ID_TOKEN===========");
+				logger.info("ID Token Header: " + idToken.getHeader().toString());
+				logger.info("valid signature");
+				logger.info("===========AUTH_ID_TOKEN===========");
 
 				return idToken.getPayload().toString();
 
 			}
-			
-		} catch (JOSEException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+		} catch (JOSEException joseException) {
+			logger.log(Level.WARNING,"JOSE Exception while verifying the signature with the payload signature ",joseException);
 		}
 
 		return ID_TOKEN_INV;
@@ -322,10 +308,10 @@ public class HomeController {
 	// OnClicking the Exchange Button this Method Ensure's to fetch Auth
 	// Response and Get Id_token to verify it further
 	/**
-	 * This Method invokes Exchange Auth response parameters with Vendors Info
+	 * This Method invokes Exchange Auth response parameters with Vendors Info.
 	 * 
-	 * @param session
-	 * @return String
+	 * @param session used session for storing authCode.
+	 * @return String Incorrect parameters response received for authorization code flow.
 	 */
 	@RequestMapping(value = "/exchange", method = RequestMethod.GET)
 	@ResponseBody
@@ -335,58 +321,50 @@ public class HomeController {
 
 		HttpClient httpclient = new HttpClient();
 		PostMethod post = new PostMethod(cR.getTokenEndpoint());
-
+		
 		// Add's Specific Parameters to fetch Auth Response
 		post.addParameter(QueryParamConstants.CODE, session.getAttribute(AUTH_CODE_SESS_ATTR).toString());
 		post.addParameter("grant_type", "authorization_code");
 		post.addParameter(QueryParamConstants.CLIENT_ID, cR.getClientId());
 		post.addParameter("client_secret", cR.getClientSecret());
 		post.addParameter(QueryParamConstants.REDIRECT_URL, redirectUri);
-		
+
 		JSONObject authResponse = null;
 		try {
 
 			httpclient.executeMethod(post);
 
-			
 			try {
 				authResponse = new JSONObject(new JSONTokener(new InputStreamReader(post.getResponseBodyAsStream())));
-				System.out.println("===========Exchange Auth Response===========");
-				System.out.println("Auth response: " + authResponse.toString(2));
-				System.out.println("===========Exchange Auth Response===========");
-				
+				logger.info("===========Exchange Auth Response===========");
+				logger.info("Auth response: " + authResponse.toString(2));
+				logger.info("===========Exchange Auth Response===========");
+
 				accessToken = authResponse.getString("access_token");
 				userIdToken = authResponse.getString("id_token");
 
 				return authResponse.toString();
-			} catch (JSONException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			} catch (IOException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
+			} catch (JSONException jsonException2) {
+				logger.log(Level.WARNING,"JSON Exception occurred while generating authResponse ",jsonException2);
+			} catch (IOException ioException1) {
+				logger.log(Level.WARNING,"IO Exception occurred while generating authResponse",ioException1);
 			}
 
-		} catch (HttpException e3) {
-			// TODO Auto-generated catch block
-			e3.printStackTrace();
-		} catch (IOException e3) {
-			// TODO Auto-generated catch block
-			e3.printStackTrace();
+		} catch (HttpException httpException3) {
+			logger.log(Level.WARNING,"Http Exception occurred while posting parameters",httpException3);
+		} catch (IOException ioException3) {
+			logger.log(Level.WARNING,"IO Exception occurred while posting parameters",ioException3);
 		}
-		return "Your Auth have incorrect parameters, try again." + '\n' +  authResponse.toString();
+		return "Your Auth have incorrect parameters, try again." + '\n' + authResponse.toString();
 	}
 
-	// This Method Ensure's Redirection's of browser to oAuth Vendor to
-	// Sign-In/Login
-	
+
 	/**
 	 * This Method Ensure's redirection of browser to oauth2.0 Vendor for Login
 	 * 
-	 * @param httpServletResponse
-	 *            Response is redirected to Authorization URL for client-side
-	 * @return void
-	 * @throws IOException
+	 * @param httpServletResponse Response is redirected to Authorization URL for client-side.
+	 * @return void null value returned.
+	 * @throws IOException exception while redirecting.
 	 */
 	@RequestMapping(value = "/redirectUrl", method = RequestMethod.GET)
 	public void redirectUrl(HttpServletResponse httpServletResponse) throws IOException {
@@ -394,15 +372,16 @@ public class HomeController {
 	}
 
 	/**
-	 * This Method set's the current session for Client-side and make AuthUrl for start
+	 * This Method set's the current session for Client-side and make AuthUrl
+	 * for start
 	 * 
 	 * @param clientRegistration
 	 *            CLient class containing the attributes required for managing
 	 *            the client registration details.
-	 * @param session
-	 * @return String
-	 * @throws ServletException
-	 * @throws IOException
+	 * @param session used session for storing client config.
+	 * @return String value for authURl after successful inputs given.
+	 * @throws ServletException exception for unsupported encoding and authentication thrown.
+	 * @throws IOException exception while authenticating.
 	 */
 	@JsonView(Views.Public.class)
 	@RequestMapping(value = "/startOAuth", method = RequestMethod.POST, consumes = { "application/json" })
@@ -423,7 +402,7 @@ public class HomeController {
 		// Make Sure that Client get's its session with specified data
 		session.setAttribute(CLIENT_REG_SESS_ATTR, clientRegistration);
 
-		System.out.println(CLIENT_REG_SESS_ATTR);
+		logger.info(CLIENT_REG_SESS_ATTR);
 		cR = (ClientRegistration) session.getAttribute(CLIENT_REG_SESS_ATTR);
 		authtype = cR.getAuthorizationCodeFlow();
 
@@ -436,45 +415,47 @@ public class HomeController {
 			responsetype = "code";
 			redirectUri = "https://oidcclient.gslab.com:8443/OIDCClient/startOAuth/_callback";
 		}
-	
+
 		nonce = new BigInteger(50, new SecureRandom());
-		
+
 		try {
-			authUrl = clientRegistration.getAuthorizationTokenEndpoint() + "?"+QueryParamConstants.RESPONSE_TYPE+"=" + responsetype + "&"+QueryParamConstants.SCOPE+"="
-					+ clientRegistration.getScope() + "&" + QueryParamConstants.CLIENT_ID+"=" + cR.getClientId() + "&" + QueryParamConstants.NONCE
-					+ "=" + nonce.toString(16) + "&"+QueryParamConstants.REDIRECT_URL+"=" + URLEncoder.encode(redirectUri, "UTF-8");
+			authUrl = clientRegistration.getAuthorizationTokenEndpoint() + "?" + QueryParamConstants.RESPONSE_TYPE + "="
+					+ responsetype + "&" + QueryParamConstants.SCOPE + "=" + clientRegistration.getScope() + "&"
+					+ QueryParamConstants.CLIENT_ID + "=" + cR.getClientId() + "&" + QueryParamConstants.NONCE + "="
+					+ nonce.toString(16) + "&" + QueryParamConstants.REDIRECT_URL + "="
+					+ URLEncoder.encode(redirectUri, "UTF-8");
 
 			logger.info("===========Auth Type & Auth URL===========");
 			logger.info("Auth Type: " + responsetype + " Auth Url:  " + authUrl);
 			logger.info("===========Auth Type & Auth URL===========");
 
-		} catch (UnsupportedEncodingException e) {
-			throw new ServletException(e);
+		} catch (UnsupportedEncodingException unsupportedEncodingException1) {
+			throw new ServletException(unsupportedEncodingException1);
 		}
 
 		return "Success";
 	}
 
 	/**
-	 * This Method is invoked as callback function for Auth. URL 
-	 * and saves Session for Exchange Code.
+	 * This Method is invoked as callback function for Auth. URL and saves
+	 * Session for Exchange Code.
 	 * 
-	 * @param request
-	 * @param response
-	 * @return String
-	 * @throws ServletException
-	 * @throws IOException
+	 * @param request used http request for getting auth code. 
+	 * @param response used http response for auth code.
+	 * @return String name of the jsp file used.
+	 * @throws ServletException exception for callback thrown.
+	 * @throws IOException exception for callback thrown.
 	 */
 	@RequestMapping(value = "/startOAuth/_callback")
 	public String authenticateCallback(HttpServletRequest request, HttpServletResponse response, Model model)
 			throws ServletException, IOException {
 
 		String excode = request.getParameter("code");
-	System.out.println(excode);
+		logger.info("Callback Received");
 		// Set's Exchange Token to Client Session's
 		if (excode != null) {
 			request.getSession().setAttribute(AUTH_CODE_SESS_ATTR, excode);
-			System.out.println("Exchange Code: " + excode);
+			logger.info("Exchange Code: " + excode);
 		}
 		return "redirect:/";
 	}

@@ -13,6 +13,11 @@ import org.springframework.web.servlet.view.JstlView;
 @Configuration
 @ComponentScan({ "com.gslab.oidc" }) 
 
+/**
+ * Class for replacement of web.xml file.
+ * web.xml is optional for servlet container >= 3.
+ * Also for setting the prefix and suffix of the view class.
+ */
 public class SpringWebConfig extends WebMvcConfigurerAdapter {
 	 
 		@Override

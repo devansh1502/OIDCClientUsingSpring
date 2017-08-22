@@ -1,5 +1,9 @@
 package com.gslab.oidc.model;
-
+/**
+ * 
+ * @author GS-1547
+ * Class for getting the response of id token claim validation.
+ */
 public class ResponseVerification {
 	private long iat, exp;
 	private String iss, aud, nonce_resp;

@@ -8,7 +8,11 @@ import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-
+/**
+ * 
+ * @author GS-1547
+ * Class for Creating Logs to store the response.
+ */
 public class ClientLogging {
 	class MyFormatter extends Formatter {
 		// Create a DateFormat to format the logger timestamp.

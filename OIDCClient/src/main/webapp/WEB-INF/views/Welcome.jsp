@@ -9,6 +9,14 @@
 /* Adding !important forces the browser to overwrite the default style applied by Bootstrap */
 </style>
 <style>
+nav ul li:first-child { float: left; }
+nav ul li { 
+  list-style:none;
+  margin:10px;
+  float: right; 
+  padding-right:170px;
+}
+
 /* The Modal (background) */
 .modal {
 	display: none; /* Hidden by default */
@@ -97,13 +105,15 @@ to {
 <spring:url value="/resources/core/gslab_favicon.png" var = "favicon" />
 <link rel="shortcut icon" type="image/png" href="${favicon}" />
 </head>
-<nav class="navbar navbar-inverse" style="background-color: #060a5a">
-	<div class="container">
-		<div class="navbar-header">
-			<a class="navbar-brand" href="#"><!-- <img src="//pulse.gslab.com/wp-content/uploads/2017/05/gslogo.png" style="display: inline-block;"><span style="display: inline-block; width: 50px; height:50px"> -->OIDC-Client<!-- </span> --></a>
-		</div>
-	</div>
+<div class="container">
+<nav class="navbar" style="background-color:#060a5a;">
+		<ul class="title-area"><!-- float this left -->
+			<li><a class="navbar-header navbar-brand" href="#"><span style="display: inline-block; color:white;">OIDC-Client</span></a></li>
+    		<li><img class="navbar-header navbar-image" src="http://pulse.gslab.com/wp-content/uploads/2017/05/gslogo.png" style="display: inline-block; z-index: 2;position:absolute;height:50px;width:150px;"></li>		
+		</ul>
+	
 </nav>
+</div>
 <body>
 	<div class="container" style="min-height: 50px">
 		<script>
@@ -174,12 +184,12 @@ to {
 							</div>
 						</div>
 						<div class="form-group form-group-md">
-							<label class="col-sm-2 control-label">OAuth Code Flow:</label>
+							<label class="col-sm-2 control-label">OAuth Flow:</label>
 							<div class="col-sm-10">
 								<select id="authorization_Code_Flow">
 									<option value="Authorization_Code_Flow">Authorization
 										Code Flow</option>
-									<option value="Implicit_Code_Flow">Implicit Code Flow</option>
+									<option value="Implicit_Code_Flow">Implicit Flow</option>
 								</select> <br> <span
 									class="alert alert-warning glyphicon glyphicon-warning-sign">Open
 									In Private Window For Implicit Flow.</span>
@@ -194,7 +204,7 @@ to {
 								class="btn btn-primary btn-md">Submit</button>
 
 							<button type="button" class="btn btn-default btn-md"
-								data-dismiss="modal">Close</button>
+								data-dismiss="modal" id="modalClose">Close</button>
 						</div>
 					</div>
 					<!-- </form> -->
@@ -248,37 +258,21 @@ to {
 			id="tokenHeader" style="display: none">
 		<p class="text-info col-md-offset-2 col-md-8 col-md-offset-2">Your Id_Token Header's are:</p>
 			<textarea class="form-control" rows="1" id="id_token_header"></textarea>
-         </div>	
-		<div class="col-md-offset-2 col-md-8 col-md-offset-2"
+         </div>
+		<div class=" col-md-8 col-md-offset-2"
 			id="payLoadInput" style="display: none">
 			<label class="col-md-2 control-label"><span class="label label-info">Payload:</span></label>
 			<textarea class="form-control" rows="5" id="payload">${payloadIm}</textarea>
-		</div>
+		</div>	
 	</div>
 	<br>
 	<script>
 	
 	
 		$.get("/OIDCClient/getconfig", function(result) {
-			/* if (result !="") {
-				console.log(result);
-				var str = JSON.parse(JSON.stringify(result));
-				$('#authorizationTokenEndpoint').val(str['authorizationTokenEndpoint']);
-				$('#tokenEndpoint').val(str['tokenEndpoint']);
-				$('#tokenKeysEndpoint').val(str['tokenKeysEndpoint']);
-				$('#clientId').val(str['clientId']);
-				$('#clientSecret').val(str['clientSecret']);
-				$('#scope').val(str['scope']);
-				$('#authorization_Code_Flow').val(str['authorizationCodeFlow']);
-				
-				//find it with what is implicit or explicit select that in list box using document.getelement.selected etc...
-			} else {
-				console.log("new session");
-			} */
 
 		}).done(function(result) {
 			if (result !="") {
-				console.log(result);
 				var str = JSON.parse(JSON.stringify(result));
 				$('#authorizationTokenEndpoint').val(str['authorizationTokenEndpoint']);
 				$('#tokenEndpoint').val(str['tokenEndpoint']);
@@ -288,20 +282,24 @@ to {
 				$('#scope').val(str['scope']);
 				$('#authorization_Code_Flow').val(str['authorizationCodeFlow']);
 				
-				//find it with what is implicit or explicit select that in list box using document.getelement.selected etc...
+				//find it with what is implicit or authorization.select that in list box using document.getelement.selected etc...
 			} else {
 				console.log("new session");
 			}
 		});
 
 		$("#exchange").click(function() {
-			$("#verify").show();
 			$("#authResponse").show();
 			$("#idToken").show();
+			$("#verify").show();
 		});
 		$("#verify").click(function() {
 			$("#payLoadInput").show();
+			$("#tokenHeader").show();
 		});
+		$("#modalClose").click(function() {
+			$("#myModal").hide();
+		})
 		var modal = document.getElementById('myModal');
 		// Get the button that opens the modal
 		var btn = document.getElementById("config");
@@ -325,26 +323,21 @@ to {
 			var string = window.location.hash.substr(1);
 			$("#requestURL").val(string);
 			var query = string.split('&');
-			console.log(string);
 			var param;
 			var idTokenVal, access_token;
 			// Parse the URI hash to fetch the access token
 			for (var i = 0; i < query.length; i++) {
 				param = query[i].split('=');
-				/* 	if (param[0] == 'access_token') {
-						access_token = param[1];
-					} */
 				if (param[0] == 'id_token') {
-					console.log(param[0]);
 					idTokenVal = param[1];
-					console.log(param[1]);
+			$("#exchangeToken").val("");
 					$("#verify").show();
 					$("#authResponse").show();
 					$("#id_token").val(idTokenVal);
 					$("#idToken").show();
 					$("#id_token_header").val(atob((idTokenVal
 							.split('.'))[0]));
-					$('#id_token_header').show();
+					$('#tokenHeader').show();
 					break;
 				}
 			}
@@ -354,19 +347,7 @@ to {
 					})
 					.done(
 							function(data, status) {
-								/* $("#id_token_header").val(atob((data
-										.split('.'))[0])); */
-								console.log("response = " + data);
 							});
-			/* var urlsend = decodeURIComponent(idurl) + '?access_token=' + access_token;
-			console.log("hello"); */
-			/* $.post("/OIDCClient/expayload", {
-				payload : urlsend
-			}, function(data, status) {
-				var str = JSON.parse(data);
-				document.getElementById("payload").value = JSON.stringify(str,undefined,4);
-			});
-			 */
 		}
 		jQuery(document).ready(function($) {
 //			$('#myModal').show();
@@ -387,8 +368,6 @@ to {
 									})
 									.done(
 											function(data, status) {
-												console.log("exchange button on click = "+data);
-												console.log("status = "+status);
 												try {
 													var str = JSON.parse(data);
 													document.getElementById("requestURL").value = JSON.stringify(str,
@@ -435,7 +414,7 @@ to {
 					dataString["scope"] = $("#scope").val();
 					dataString["authorizationCodeFlow"] = $(
 							"#authorization_Code_Flow").val();
-					console.log(JSON.stringify(dataString));
+				
 					$.ajax({
 						type : "POST",
 						headers : {
@@ -449,17 +428,12 @@ to {
 						timeout : 100000,
 						success : function(data) {
 							windows.location = data;
-							console.log("SUCCESS: ", data);
 							 $('#myModal').hide();
-							//display(data);
 						},
 						error : function(e) {
-							console.log("ERROR: ", e);
 							$('#myModal').hide();
-							//display(e);
 						},
 						done : function(e) {
-							console.log("DONE");
 							enableSubmitButton(true);
 						}
 					})

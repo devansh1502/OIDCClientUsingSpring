@@ -2,7 +2,11 @@ package com.gslab.oidc.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.gslab.oidc.jsonViews.Views;
-
+/**
+ * 
+ * @author GS-1547
+ * Class for showing fields annotated with JsonView.
+ */
 public class User {
 	@JsonView(Views.Public.class)
 	String authorizationTokenEndpoint;

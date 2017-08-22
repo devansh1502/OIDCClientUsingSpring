@@ -1,5 +1,9 @@
 package com.gslab.oidc.model;
-
+ /**
+  * 
+  * @author GS-1547
+  * Class for declaring key paramaters required for OIDC Client Configuration 
+  */
 public class ClientRegistration {
 	private String authorizationTokenEndpoint;
 	private String tokenEndpoint;

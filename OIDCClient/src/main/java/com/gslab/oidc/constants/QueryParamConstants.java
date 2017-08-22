@@ -1,5 +1,9 @@
 package com.gslab.oidc.constants;
-
+/**
+ * 
+ * @author GS-1547
+ * Class for Constants
+ */
 public class QueryParamConstants {
 
 	public static final String NONCE ="nonce";
