@@ -195,6 +195,7 @@ to {
 									In Private Window For Implicit Flow.</span>
 							</div>
 						</div>
+						<p>Remember to set https://oidcclient.gslab.com:8443/OIDCClient/startOAuth/_callback as your callback URL.</p>
 					</form>
 				</div>
 				<div class="modal-footer">
@@ -220,7 +221,7 @@ to {
 			<p class="text-info col-md-offset-2 col-md-2 col-md-offset-3">Your
 				Code is:</p>
 			<input type="text" class="form-control" id="exchangeToken"
-				value="${code}" />
+				value="${code}" readonly="readonly" />
 		</div>
 		<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
 		<div id="exchange" class="col-md-offset-5 col-md-2 col-md-offset-5">
@@ -232,8 +233,8 @@ to {
 		<p class="text-info col-md-offset-2 col-md-8 col-md-offset-2">Now, we will exchange that access code for an id token,with our server making a request to the token endpoint</p>
 		<div class="col-md-offset-2 col-md-8 col-md-offset-2"
 			id="authResponse" style="display: none">
-			<label class="col-md-2 control-label"><span class="label label-info">Auth Response:</span></label>
-			<textarea class="form-control" rows="5" id="requestURL"></textarea>
+			<label class="col-md-2 control-label"><span class="label label-info">Response:</span></label>
+			<textarea class="form-control" rows="5" id="requestURL" readonly="readonly"></textarea>
 			<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
 			<p class="text-info col-md-offset-2 col-md-8 col-md-offset-2">Now, we need to verify that the ID Token sent was from the correct source by validating the JWT's signature</p>
 		</div>
@@ -243,7 +244,7 @@ to {
 			<label class="col-md-2 control-label"><span class="label label-info">Id Token:</span></label>
 			<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
 			<p class="text-info col-md-offset-2 col-md-8 col-md-offset-2">Your Id_Token is:</p>
-			<textarea class="form-control" rows="5" id="id_token">${idToken}</textarea>
+			<textarea class="form-control" rows="5" id="id_token" readonly="readonly">${idToken}</textarea>
 			<p class="text-info col-md-offset-2 col-md-8 col-md-offset-2">This token is cryptographically signed.We'll fetch and use the Public Key From the Token Keys Endpoint to validate it.</p>
 		</div>
 		<p class="col-md-offset-2 col-md-7 col-md-offset-3"></p>
@@ -257,12 +258,12 @@ to {
 		<div class="col-md-offset-2 col-md-8 col-md-offset-2"
 			id="tokenHeader" style="display: none">
 		<p class="text-info col-md-offset-2 col-md-8 col-md-offset-2">Your Id_Token Header's are:</p>
-			<textarea class="form-control" rows="1" id="id_token_header"></textarea>
+			<textarea class="form-control" rows="1" id="id_token_header" readonly="readonly"></textarea>
          </div>
 		<div class=" col-md-8 col-md-offset-2"
 			id="payLoadInput" style="display: none">
 			<label class="col-md-2 control-label"><span class="label label-info">Payload:</span></label>
-			<textarea class="form-control" rows="5" id="payload">${payloadIm}</textarea>
+			<textarea class="form-control" rows="5" id="payload" readonly="readonly">${payloadIm}</textarea>
 		</div>	
 	</div>
 	<br>

@@ -2,7 +2,7 @@ package com.gslab.oidc.model;
 /**
  * 
  * @author GS-1547
- * class for declaring id Token and exchange code
+ * class for response type (id Token or exchange code)
  */
 public class OauthResponse {
 

@@ -14,7 +14,7 @@ import org.springframework.web.servlet.view.JstlView;
 @ComponentScan({ "com.gslab.oidc" }) 
 
 /**
- * Class for replacement of web.xml file.
+ * Class for replacement of web.xml file and annotation based.
  * web.xml is optional for servlet container >= 3.
  * Also for setting the prefix and suffix of the view class.
  */
